@@ -12,7 +12,7 @@ const categories = [
   },
   {
     name: "Frascos",
-    href: "/productos?categoria=frascos",
+    href: "/productos?categoria=frascos-y-botellas",
     image: "/home/frascos.png",
     description: "Frascos de vidrio para conservas, decoración y regalos.",
   },
