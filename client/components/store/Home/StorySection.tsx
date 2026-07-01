@@ -1,5 +1,6 @@
 "use client";
 import { Container } from "./Container";
+import { TextHighlight } from "@/components/ui/TextHighlight";
 
 export function StorySection() {
   return (
@@ -11,7 +12,8 @@ export function StorySection() {
       <div
         className="absolute inset-0 pointer-events-none bg-trama-full"
         style={{
-          boxShadow: "inset 0 12px 0 #9B8F7D, inset 0 -12px 0 #9B8F7D",
+          boxShadow:
+            "inset 0 12px 0 var(--color-brown-dark), inset 0 -12px 0 var(--color-brown-dark)",
         }}
       />
       {/* Luz cálida — spotlight superior */}
@@ -35,27 +37,39 @@ export function StorySection() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-20 items-start relative z-10">
           <div className="relative min-h-[420px] md:min-h-[500px] flex items-center">
-            <div className="px-6 py-8 md:px-10 md:py-12" style={{ textShadow: "0 2px 12px rgba(0,0,0,0.6)" }}>
-              <span className="inline-block text-xs font-medium tracking-[0.2em] uppercase text-white mb-4">
-                Nuestra historia
-              </span>
+            <div className="px-6 py-8 md:px-10 md:py-12">
+              <TextHighlight>
+                <span
+                  className="inline-block text-xs font-medium tracking-[0.2em] uppercase text-white mb-4"
+                  style={{ textShadow: "0 2px 12px rgba(0,0,0,0.6)" }}
+                >
+                  Nuestra historia
+                </span>
+              </TextHighlight>
               <h2
                 className="text-3xl md:text-4xl font-light text-white mb-6"
-                style={{ fontFamily: "var(--font-heading)" }}
+                style={{
+                  fontFamily: "var(--font-heading)",
+                  textShadow: "0 2px 12px rgba(0,0,0,0.6)",
+                }}
               >
                 Desde 2006 acompañando a emprendedores.
               </h2>
-              <div className="space-y-4 text-white/80 leading-relaxed">
+              <div className="space-y-4 font-medium  text-white leading-relaxed">
                 <p>
-                  Feria Descartable nació con una misión clara: ser el aliado de
-                  quienes empiezan y de quienes ya crecieron. Más de 15 años
-                  acercando los mejores insumos a microemprendedores, comercios
-                  y familias.
+                  <TextHighlight>
+                    Feria Descartable nació con una misión clara: ser el aliado
+                    de quienes empiezan y de quienes ya crecieron. Más de 15
+                    años acercando los mejores insumos a microemprendedores,
+                    comercios y familias.
+                  </TextHighlight>
                 </p>
                 <p>
-                  Cada producto que ofrecemos fue elegido pensando en la
-                  calidad, el precio y la confianza. Porque cuando tu negocio
-                  crece, nosotros también.
+                  <TextHighlight>
+                    Cada producto que ofrecemos fue elegido pensando en la
+                    calidad, el precio y la confianza. Porque cuando tu negocio
+                    crece, nosotros también.
+                  </TextHighlight>
                 </p>
               </div>
             </div>
@@ -64,7 +78,7 @@ export function StorySection() {
             <img
               src="/home/taller2.jpg"
               alt="Taller de Feria Descartable"
-              className="w-full h-[350px] md:h-[500px] rounded-lg object-cover"
+              className="w-full h-[350px] md:h-[500px] rounded-lg object-cover border-4 border-[var(--color-brown-dark)] shadow-lg"
             />
           </div>
         </div>

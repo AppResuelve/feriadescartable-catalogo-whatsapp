@@ -20,6 +20,10 @@
   --color-border: #E0E0E0;
   --color-border-hover: #CCCCCC;
 
+  --color-brown-light: #E5A95B;
+  --color-brown-medium: #C6B29A;
+  --color-brown-dark: #9B8F7D;
+
   --font-heading: "Montserrat", sans-serif;
   --font-body: "Montserrat", sans-serif;
   --font-admin: "DM Sans", sans-serif;

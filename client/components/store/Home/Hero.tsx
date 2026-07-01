@@ -6,7 +6,13 @@ export function Hero() {
   return (
     <section className="relative min-h-screen flex flex-col">
       <div className="absolute inset-0 -z-10">
-        <video autoPlay muted loop playsInline className="w-full h-full object-cover">
+        <video
+          autoPlay
+          muted
+          loop
+          playsInline
+          className="w-full h-full object-cover"
+        >
           <source src="/home/herovideo.mp4" type="video/mp4" />
         </video>
         <div className="absolute inset-0 bg-black/40" />
@@ -23,7 +29,7 @@ export function Hero() {
       <div className="flex-1" />
 
       <Container>
-        <div className="pb-16 md:pb-24">
+        <div className="pb-32">
           <span className="inline-block text-xs font-medium tracking-[0.2em] uppercase text-[var(--color-primary)] mb-6">
             Desde 2006
           </span>
