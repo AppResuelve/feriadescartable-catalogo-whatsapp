@@ -6,7 +6,6 @@ import { CategoryShowcase } from "@/components/store/Home/CategoryShowcase";
 import { StorySection } from "@/components/store/Home/StorySection";
 import { FeaturedProducts } from "@/components/store/Home/FeaturedProducts";
 import { BenefitsSection } from "@/components/store/Home/BenefitsSection";
-import { GallerySection } from "@/components/store/Home/GallerySection";
 import { CTASection } from "@/components/store/Home/CTASection";
 
 export default function HomeClient() {
@@ -45,8 +44,6 @@ export default function HomeClient() {
       <FeaturedProducts />
 
       <BenefitsSection />
-
-      <GallerySection />
 
       <CTASection />
     </main>

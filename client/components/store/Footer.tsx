@@ -190,19 +190,29 @@ export function Footer({ waveFromColor }) {
           <div className="lg:col-span-1">
             <div className="mb-5">
               {store?.logo_url ? (
-                <img
-                  src={store.logo_url}
-                  alt={store.business_name || ""}
-                  className="h-24 w-auto object-contain"
-                />
+                <div className="bg-[var(--color-primary)] rounded-full p-2 inline-block">
+                  <img
+                    src={store.logo_url}
+                    alt={store.business_name || ""}
+                    className="h-14 w-auto object-contain"
+                  />
+                </div>
               ) : (
-                <img
-                  src="/logotipo.png"
-                  alt={store?.business_name || "Feria Descartable"}
-                  className="h-24 w-auto object-contain"
-                />
+                <div className="bg-[var(--color-primary)] rounded-full p-2 inline-block">
+                  <img
+                    src="/logotipo.png"
+                    alt={store?.business_name || "Feria Descartable"}
+                    className="h-14 w-auto object-contain"
+                  />
+                </div>
               )}
             </div>
+            <p
+              className="font-semibold text-lg mb-2"
+              style={{ fontFamily: "var(--font-heading)", color: "var(--color-text-primary)" }}
+            >
+              {store?.business_name || "Feria Descartable"}
+            </p>
             <p
               className="text-sm leading-relaxed"
               style={{ color: "var(--color-text-secondary)" }}

@@ -47,7 +47,7 @@ export function Navbar({ heroMode = false }) {
 
   useEffect(() => {
     if (!heroMode) return;
-    const onScroll = () => setScrolled(window.scrollY > 60);
+    const onScroll = () => setScrolled(window.scrollY > 180);
     window.addEventListener("scroll", onScroll, { passive: true });
     onScroll();
     return () => window.removeEventListener("scroll", onScroll);
@@ -68,9 +68,9 @@ export function Navbar({ heroMode = false }) {
 
   /* Colores según estado */
   const textColor = isTransparent
-    ? "var(--color-text-primary)"
+    ? "rgba(255,255,255,0.9)"
     : "var(--color-text-secondary)";
-  const textColorActive = "var(--color-primary)";
+  const textColorActive = isTransparent ? "#ffffff" : "var(--color-primary)";
   const bgStyle = isTransparent
     ? { backgroundColor: "transparent" }
     : {
@@ -88,23 +88,38 @@ export function Navbar({ heroMode = false }) {
           <div className="flex items-center justify-between h-16">
             {/* Logo */}
             <Link href="/" className="flex items-center gap-3 shrink-0">
-              {siteData.company?.logo ? (
-                <img
-                  src={siteData.company.logo}
-                  alt={siteData.business?.name || ""}
-                  className="h-12 w-auto object-contain"
-                />
+              {isTransparent ? (
+                <span
+                  style={{
+                    fontFamily: "var(--font-heading)",
+                    fontSize: "1.3rem",
+                    fontWeight: 600,
+                    color: "var(--color-primary)",
+                  }}
+                >
+                  {siteData.business?.name || "Feria Descartable"}
+                </span>
+              ) : siteData.company?.logo ? (
+                <div className="bg-[var(--color-primary)] rounded-full p-1">
+                  <img
+                    src={siteData.company.logo}
+                    alt={siteData.business?.name || ""}
+                    className="h-10 w-auto object-contain"
+                  />
+                </div>
               ) : (
-                <img
-                  src="/logotipo.png"
-                  alt={siteData.business?.name || "Feria Descartable"}
-                  className="h-12 w-auto object-contain"
-                />
+                <div className="bg-[var(--color-primary)] rounded-full p-1">
+                  <img
+                    src="/logotipo.png"
+                    alt={siteData.business?.name || "Feria Descartable"}
+                    className="h-10 w-auto object-contain"
+                  />
+                </div>
               )}
             </Link>
 
             {/* Links desktop */}
-            <div className="hidden md:flex items-center gap-1">
+            <div className="hidden md:flex items-center gap-1 ml-auto mr-4">
               {navLinks.map((item) => {
                 const isProducts = item.href === "/productos";
                 const hasCategories = isProducts && categories.length > 0;
@@ -209,13 +224,12 @@ export function Navbar({ heroMode = false }) {
               <Link
                 href="/carrito"
                 className="relative flex items-center gap-1.5 p-2.5 sm:px-3 sm:py-2 rounded-full text-sm font-medium transition-all duration-300 bg-transparent text-[var(--color-text-primary)] md:bg-[var(--color-primary)] md:text-white md:hover:bg-[var(--color-primary-hover)]"
+                style={isTransparent ? { color: "#ffffff" } : undefined}
               >
                 <ShoppingCart className="w-5 h-5" />
                 <span className="hidden sm:block">Carrito</span>
                 {totalItems > 0 && (
-                  <span
-                    className="absolute -top-1.5 -right-1.5 w-5 h-5 rounded-full text-xs font-bold flex items-center justify-center bg-[var(--color-accent)] text-white"
-                  >
+                  <span className="absolute -top-1.5 -right-1.5 w-5 h-5 rounded-full text-xs font-bold flex items-center justify-center bg-[var(--color-accent)] text-white">
                     {totalItems > 9 ? "9+" : totalItems}
                   </span>
                 )}
@@ -225,7 +239,9 @@ export function Navbar({ heroMode = false }) {
                 onClick={() => setIsOpen(true)}
                 className="md:hidden p-2 rounded-lg transition-colors"
                 style={{
-                  color: "var(--color-text-primary)",
+                  color: isTransparent
+                    ? "#ffffff"
+                    : "var(--color-text-primary)",
                 }}
                 aria-label="Abrir menú"
               >
@@ -414,9 +430,7 @@ export function Navbar({ heroMode = false }) {
             <ShoppingCart className="w-4 h-4" />
             Ver carrito
             {totalItems > 0 && (
-              <span
-                className="absolute -top-2 right-3 w-5 h-5 rounded-full text-xs font-bold flex items-center justify-center bg-[var(--color-accent)] text-white"
-              >
+              <span className="absolute -top-2 right-3 w-5 h-5 rounded-full text-xs font-bold flex items-center justify-center bg-[var(--color-accent)] text-white">
                 {totalItems > 9 ? "9+" : totalItems}
               </span>
             )}

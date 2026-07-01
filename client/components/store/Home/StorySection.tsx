@@ -32,7 +32,7 @@ export function StorySection() {
           </div>
           <div>
             <img
-              src="/home/taller2.jpeg"
+              src="/home/taller2.jpg"
               alt="Taller de Feria Descartable"
               className="w-full h-[350px] md:h-[500px] rounded-lg object-cover"
             />

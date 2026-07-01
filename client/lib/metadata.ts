@@ -6,7 +6,7 @@ export const baseMetadata = {
     template: `%s — Feria Descartable`,
   },
   description: 'Productos hechos a mano con dedicación',
-  icons: [{ url: '/logotipo.png' }],
+  icons: [{ url: '/favicon.png' }],
   openGraph: {
     siteName: 'Feria Descartable',
     images: [`${BASE_URL}/og-image.jpg`],

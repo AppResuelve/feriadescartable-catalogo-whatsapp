@@ -1,11 +1,13 @@
 type WaveDividerProps = {
   fillColor?: string;
   position?: "bottom" | "top";
+  patternUrl?: string;
 };
 
 export function WaveDivider({
   fillColor = "var(--color-background)",
   position = "bottom",
+  patternUrl,
 }: WaveDividerProps) {
   const isBottom = position === "bottom";
 
@@ -25,9 +27,21 @@ export function WaveDivider({
         className="w-full h-[50px] md:h-[150px]"
         style={isBottom ? { transform: "rotate(180deg)" } : {}}
       >
+        {patternUrl && (
+          <defs>
+            <pattern
+              id="bg-pattern"
+              patternUnits="userSpaceOnUse"
+              width="360"
+              height="1920"
+            >
+              <image href={patternUrl} width="360" height="1920" preserveAspectRatio="none" />
+            </pattern>
+          </defs>
+        )}
         <path
           d="M0,0V7.23C0,65.52,268.63,112.77,600,112.77S1200,65.52,1200,7.23V0Z"
-          fill={fillColor}
+          fill={patternUrl ? "url(#bg-pattern)" : fillColor}
         />
       </svg>
     </div>
