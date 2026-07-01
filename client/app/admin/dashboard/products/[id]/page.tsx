@@ -419,7 +419,7 @@ export default function ProductForm() {
           wholesalePrice: s.wholesalePrice ? Number(s.wholesalePrice) : null,
           wholesaleMinQty: s.wholesaleMinQty ? Number(s.wholesaleMinQty) : null,
           stock: Number(s.stock) || 0, sku: s.sku || null,
-          images: s.images || [], sortOrder: s.sortOrder || 0,
+          images: s.images || [], sortOrder: Number(s.sortOrder) || 0,
           status: s.status || 'active',
           attributeValueIds: s.attributeValueIds || [],
         })),
