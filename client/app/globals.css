@@ -81,3 +81,17 @@ body:has(.admin-root) ::selection {
     cursor: pointer;
   }
 }
+
+.bg-trama {
+  background-image: url('/trama-de-madera.png');
+  background-size: auto;
+  background-repeat: repeat-x;
+  opacity: 0.15;
+}
+
+@media (max-width: 767px) {
+  .bg-trama {
+    background-size: 100% auto;
+    background-repeat: repeat-y;
+  }
+}

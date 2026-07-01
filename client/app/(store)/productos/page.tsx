@@ -288,15 +288,7 @@ export default function Products() {
         }}
       >
         {/* Pétalos decorativos */}
-        <div
-          className="absolute inset-0 pointer-events-none"
-          style={{
-            backgroundImage: 'url("/trama-de-madera.png")',
-            backgroundRepeat: "repeat-x",
-            backgroundSize: "auto",
-            opacity: 0.15,
-          }}
-        />
+        <div className="absolute inset-0 pointer-events-none bg-trama" />
 
         <div className="relative max-w-7xl mx-auto z-10">
           {/* Eyebrow */}

@@ -96,15 +96,7 @@ export default function Contact() {
           paddingTop: "5rem",
         }}
       >
-        <div
-          className="absolute inset-0 pointer-events-none"
-          style={{
-            backgroundImage: 'url("/trama-de-madera.png")',
-            backgroundRepeat: "repeat-x",
-            backgroundSize: "auto",
-            opacity: 0.15,
-          }}
-        />
+        <div className="absolute inset-0 pointer-events-none bg-trama" />
 
         <div className="relative max-w-7xl mx-auto z-10">
           <div className="flex items-center gap-3 mb-4">
