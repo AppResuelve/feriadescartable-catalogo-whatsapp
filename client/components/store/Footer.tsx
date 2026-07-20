@@ -203,23 +203,24 @@ export function Footer({ waveFromColor }) {
                   className="text-sm leading-relaxed"
                   style={{ color: "var(--color-text-secondary)" }}
                 >
-                  Descartables, frascos, moldes y packaging. Acompañamos
-                  emprendedores desde el inicio.
+                  {store?.description || ""}
                 </p>
               </div>
-              <div className="rounded-xl overflow-hidden border border-[var(--color-border)]">
-                <iframe
-                  title="Mapa de Feria Descartable"
-                  src="https://maps.google.com/maps?q=Av.+Corrientes+1234,+Buenos+Aires&t=&z=14&ie=UTF8&iwloc=&output=embed"
-                  width="100%"
-                  height="100%"
-                  className="min-h-[150px] lg:min-h-[200px]"
-                  style={{ border: 0 }}
-                  allowFullScreen
-                  loading="lazy"
-                  referrerPolicy="no-referrer-when-downgrade"
-                />
-              </div>
+              {store?.address && (
+                <div className="rounded-xl overflow-hidden border border-[var(--color-border)]">
+                  <iframe
+                    title={`Mapa de ${store?.business_name || "Feria Descartable"}`}
+                    src={`https://maps.google.com/maps?q=${encodeURIComponent(store.address)}&t=&z=14&ie=UTF8&iwloc=&output=embed`}
+                    width="100%"
+                    height="100%"
+                    className="min-h-[150px] lg:min-h-[200px]"
+                    style={{ border: 0 }}
+                    allowFullScreen
+                    loading="lazy"
+                    referrerPolicy="no-referrer-when-downgrade"
+                  />
+                </div>
+              )}
             </div>
           </div>
 
