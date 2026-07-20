@@ -4,7 +4,7 @@
 import { useState, useMemo, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft, Tag, Check } from "lucide-react";
+import { ArrowLeft, ShoppingCart, ChevronDown } from "lucide-react";
 import { content } from "@/data/siteData";
 import { useRelatedProducts } from "@/hooks/useProducts";
 import { useCart } from "@/context/CartContext";
@@ -17,8 +17,8 @@ import { SectionHeader } from "@/components/ui/SectionHeader";
 export default function ProductDetailClient({ product }: { product: any }) {
   const router = useRouter();
   const { addItem, getItemQuantity } = useCart();
-  const [justAdded, setJustAdded] = useState(false);
   const [selectedValues, setSelectedValues] = useState({});
+  const [selectQty, setSelectQty] = useState(1);
 
   const categoryId = product?.categoryId;
   const { products: relatedProducts } = useRelatedProducts(
@@ -83,9 +83,7 @@ export default function ProductDetailClient({ product }: { product: any }) {
     .slice(0, 4);
 
   const handleAddToCart = () => {
-    addItem(product.id, 1, derivedSku?.id)
-    setJustAdded(true);
-    setTimeout(() => setJustAdded(false), 2000);
+    addItem(product.id, selectQty, derivedSku?.id);
   };
 
   const handleAddWholesale = () => {
@@ -316,33 +314,82 @@ export default function ProductDetailClient({ product }: { product: any }) {
               </p>
             )}
 
-            {/* Botón principal — pill violeta */}
-            <button
-              onClick={handleAddToCart}
-              className="flex items-center justify-center gap-2 w-full px-8 py-3.5 font-medium text-sm transition-all duration-200 hover:-translate-y-0.5"
-              style={{
-                borderRadius: "2rem",
-                backgroundColor: justAdded
-                  ? "var(--color-accent)"
-                  : "var(--color-primary)",
-                color: "#ffffff",
-                boxShadow: justAdded
-                  ? "0 4px 16px rgba(164,176,144,0.3)"
-                  : "0 4px 20px rgba(79,200,28,0.3)",
-              }}
-            >
-              {justAdded ? (
-                <>
-                  <Check className="w-4 h-4" />
-                  {content.productDetail.addedToCart}
-                </>
-              ) : (
-                <>
-                  {content.productDetail.addToCart}
-                  {quantity > 0 && ` (${quantity} en carrito)`}
-                </>
-              )}
-            </button>
+            {/* Botones — Select + Agregar + Ver carrito */}
+            <div className="flex flex-col md:flex-row md:items-start gap-3">
+              <div className="flex items-center gap-2 w-full md:w-auto">
+                <label className="text-sm font-medium text-[var(--color-text-secondary)] whitespace-nowrap">Cantidad</label>
+                <div className="relative inline-flex items-center">
+                  <select
+                    value={selectQty}
+                    onChange={(e) => setSelectQty(Number(e.target.value))}
+                    className="h-[46px] pl-4 pr-10 rounded-full border text-sm font-medium text-[var(--color-text-primary)] bg-transparent transition-all duration-200 appearance-none cursor-pointer text-center"
+                    style={{
+                      borderColor: "var(--color-border)",
+                      backgroundColor: "var(--color-card)",
+                    }}
+                    onMouseEnter={(e) => e.currentTarget.style.borderColor = "var(--color-primary)"}
+                    onMouseLeave={(e) => e.currentTarget.style.borderColor = "var(--color-border)"}
+                  >
+                    {Array.from({ length: 10 }, (_, i) => (
+                      <option key={i + 1} value={i + 1}>{i + 1}</option>
+                    ))}
+                  </select>
+                  <ChevronDown className="absolute right-3 w-4 h-4 pointer-events-none text-[var(--color-text-muted)]" />
+                </div>
+              </div>
+              <div className="flex flex-col gap-3 flex-1">
+                <button
+                  onClick={handleAddToCart}
+                  className="flex items-center justify-center gap-2 w-full px-8 py-3 font-medium text-sm transition-all duration-200 hover:-translate-y-0.5 cursor-pointer"
+                  style={{
+                    borderRadius: "2rem",
+                    backgroundColor: quantity > 0 ? "var(--color-primary-light)" : "var(--color-primary)",
+                    color: quantity > 0 ? "var(--color-primary)" : "#ffffff",
+                    border: quantity > 0 ? "1px solid var(--color-primary)" : "none",
+                    boxShadow: quantity > 0 ? "none" : "0 4px 20px rgba(79,200,28,0.3)",
+                  }}
+                  onMouseEnter={(e) => {
+                    if (quantity === 0) e.currentTarget.style.backgroundColor = "var(--color-primary-hover)";
+                    else { e.currentTarget.style.backgroundColor = "var(--color-primary)"; e.currentTarget.style.color = "#ffffff"; }
+                  }}
+                  onMouseLeave={(e) => {
+                    if (quantity === 0) e.currentTarget.style.backgroundColor = "var(--color-primary)";
+                    else { e.currentTarget.style.backgroundColor = "var(--color-primary-light)"; e.currentTarget.style.color = "var(--color-primary)"; }
+                  }}
+                >
+                  {quantity > 0 ? (
+                    `Agregado (${quantity})`
+                  ) : (
+                    <>
+                      <ShoppingCart className="w-4 h-4 md:hidden" />
+                      <span className="hidden md:inline">{content.productDetail.addToCart}</span>
+                      <span className="md:hidden">Agregar</span>
+                    </>
+                  )}
+                </button>
+                <Link
+                  href="/carrito"
+                  className="flex items-center justify-center gap-2 w-full px-8 py-3 font-medium text-sm transition-all duration-200 hover:-translate-y-0.5"
+                  style={{
+                    borderRadius: "2rem",
+                    border: "1px solid var(--color-primary)",
+                    color: "var(--color-primary)",
+                    backgroundColor: "transparent",
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundColor = "var(--color-primary)";
+                    e.currentTarget.style.color = "#ffffff";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = "transparent";
+                    e.currentTarget.style.color = "var(--color-primary)";
+                  }}
+                >
+                  <ShoppingCart className="w-4 h-4" />
+                  {content.productDetail.viewCart}
+                </Link>
+              </div>
+            </div>
 
             {/* Botón mayorista — outline pill */}
             {hasWholesale && (

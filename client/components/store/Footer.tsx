@@ -1,5 +1,5 @@
 // @ts-nocheck
-'use client'
+"use client";
 import Link from "next/link";
 import { MapPin, Mail, MessageCircle } from "lucide-react";
 import { siteData } from "@/data/siteData";
@@ -185,193 +185,202 @@ export function Footer({ waveFromColor }) {
       }}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-14 pb-8 relative">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 mb-12">
-          {/* ── Col 1: Logo + descripción ── */}
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-10 mb-12">
+          {/* ── Contenedor 1: Logo + Nombre + Desc + Mapa ── */}
           <div className="lg:col-span-1">
-            <div className="mb-5">
-              {store?.logo_url ? (
-                <div className="bg-[var(--color-primary)] rounded-full p-2 inline-block">
-                  <img
-                    src={store.logo_url}
-                    alt={store.business_name || ""}
-                    className="h-14 w-auto object-contain"
-                  />
-                </div>
-              ) : (
-                <div className="bg-[var(--color-primary)] rounded-full p-2 inline-block">
-                  <img
-                    src="/logotipo.png"
-                    alt={store?.business_name || "Feria Descartable"}
-                    className="h-14 w-auto object-contain"
-                  />
-                </div>
-              )}
-            </div>
-            <p
-              className="font-semibold text-lg mb-2"
-              style={{ fontFamily: "var(--font-heading)", color: "var(--color-text-primary)" }}
-            >
-              {store?.business_name || "Feria Descartable"}
-            </p>
-            <p
-              className="text-sm leading-relaxed"
-              style={{ color: "var(--color-text-secondary)" }}
-            >
-              {store?.description || ""}
-            </p>
-          </div>
-
-          {/* ── Cols 2-3: Navegación desde siteData ── */}
-          {siteData.footer.columns.map((column, index) => (
-            <div key={index}>
-              <FooterColTitle>{column.title}</FooterColTitle>
-              <ul className="space-y-2.5">
-                {column.links.map((link, linkIndex) => (
-                  <li key={linkIndex}>
-                    <Link
-                      href={link.href}
-                      className="text-sm transition-colors duration-200"
-                      style={{ color: "var(--color-text-secondary)" }}
-                      onMouseEnter={(e) =>
-                        (e.currentTarget.style.color = "var(--color-text-primary)")
-                      }
-                      onMouseLeave={(e) =>
-                        (e.currentTarget.style.color = "var(--color-text-secondary)")
-                      }
-                    >
-                      {link.label}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))}
-
-          {/* ── Col 4: Categorías desde API ── */}
-          <div>
-            <FooterColTitle>Categorías</FooterColTitle>
-            {categories.length > 0 ? (
-              <ul className="space-y-2.5">
-                {categories.map((cat) => (
-                  <li key={cat.id}>
-                    <Link
-                      href={`/productos?cat=${encodeURIComponent(cat.name)}`}
-                      className="text-sm transition-colors duration-200"
-                      style={{ color: "var(--color-text-secondary)" }}
-                      onMouseEnter={(e) =>
-                        (e.currentTarget.style.color = "var(--color-text-primary)")
-                      }
-                      onMouseLeave={(e) =>
-                        (e.currentTarget.style.color = "var(--color-text-secondary)")
-                      }
-                    >
-                      {cat.name}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <p
-                className="text-sm"
-                style={{ color: "var(--color-text-muted)" }}
-              >
-                Cargando...
-              </p>
-            )}
-          </div>
-
-          {/* ── Col 5: Contacto + Horarios + Redes ── */}
-          <div className="space-y-8">
-            {/* Contacto */}
-            <div>
-              <FooterColTitle>Contacto</FooterColTitle>
-              <ul className="space-y-3">
-                {whatsappNumber && (
-                  <li>
-                    <ContactItem
-                      icon={MessageCircle}
-                      href={`https://wa.me/${whatsappNumber}`}
-                    >
-                      WhatsApp
-                    </ContactItem>
-                  </li>
-                )}
-                {store?.address && (
-                  <li>
-                    <ContactItem icon={MapPin}>{store.address}</ContactItem>
-                  </li>
-                )}
-                {store?.email && (
-                  <li>
-                    <ContactItem icon={Mail} href={`mailto:${store.email}`}>
-                      {store.email}
-                    </ContactItem>
-                  </li>
-                )}
-              </ul>
-            </div>
-
-            {/* Horarios */}
-            {formattedSchedules.length > 0 && (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-1 gap-6">
               <div>
-                <FooterColTitle>Horarios</FooterColTitle>
-                <ul className="space-y-2">
-                  {formattedSchedules.map((s, i) => (
-                    <li key={i}>
-                      <span
-                        className="text-xs font-medium block"
-                        style={{ color: "var(--color-text-secondary)" }}
-                      >
-                        {s.days}
-                      </span>
-                      <span
-                        className="text-xs"
-                        style={{ color: "var(--color-primary)", opacity: 0.8 }}
-                      >
-                        {s.times}
-                      </span>
-                    </li>
-                  ))}
-                </ul>
+                <p
+                  className="font-semibold text-2xl md:text-3xl mb-2"
+                  style={{
+                    fontFamily: "var(--font-heading)",
+                    color: "var(--color-text-primary)",
+                  }}
+                >
+                  {store?.business_name || "Feria Descartable"}
+                </p>
+                <p
+                  className="text-sm leading-relaxed"
+                  style={{ color: "var(--color-text-secondary)" }}
+                >
+                  Descartables, frascos, moldes y packaging. Acompañamos
+                  emprendedores desde el inicio.
+                </p>
               </div>
-            )}
+              <div className="rounded-xl overflow-hidden border border-[var(--color-border)]">
+                <iframe
+                  title="Mapa de Feria Descartable"
+                  src="https://maps.google.com/maps?q=Av.+Corrientes+1234,+Buenos+Aires&t=&z=14&ie=UTF8&iwloc=&output=embed"
+                  width="100%"
+                  height="100%"
+                  className="min-h-[150px] lg:min-h-[200px]"
+                  style={{ border: 0 }}
+                  allowFullScreen
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                />
+              </div>
+            </div>
+          </div>
 
-            {/* Redes */}
-            {hasSocials && (
+          {/* ── Contenedor 2: Navegación + Categorías + Contacto ── */}
+          <div className="lg:col-span-3">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
+              {/* Navegación */}
+              {siteData.footer.columns.map((column, index) => (
+                <div key={index}>
+                  <FooterColTitle>{column.title}</FooterColTitle>
+                  <ul className="space-y-2.5">
+                    {column.links.map((link, linkIndex) => (
+                      <li key={linkIndex}>
+                        <Link
+                          href={link.href}
+                          className="text-sm transition-colors duration-200"
+                          style={{ color: "var(--color-text-secondary)" }}
+                          onMouseEnter={(e) =>
+                            (e.currentTarget.style.color =
+                              "var(--color-text-primary)")
+                          }
+                          onMouseLeave={(e) =>
+                            (e.currentTarget.style.color =
+                              "var(--color-text-secondary)")
+                          }
+                        >
+                          {link.label}
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+
+              {/* Categorías */}
               <div>
-                <FooterColTitle>Seguinos</FooterColTitle>
-                <div className="flex gap-2 flex-wrap">
-                  {["instagram", "facebook", "tiktok", "youtube"].map((net) =>
-                    store?.[net] ? (
-                      <a
-                        key={net}
-                        href={store[net]}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        aria-label={net}
-                        className="w-9 h-9 rounded-xl flex items-center justify-center transition-all duration-200 hover:-translate-y-0.5"
-                        style={{
-                          backgroundColor: "var(--color-border)",
-                          color: "var(--color-text-muted)",
-                        }}
-                        onMouseEnter={(e) => {
-                          e.currentTarget.style.backgroundColor =
-                            "var(--color-primary)";
-                          e.currentTarget.style.color = "#ffffff";
-                        }}
-                        onMouseLeave={(e) => {
-                          e.currentTarget.style.backgroundColor =
-                            "var(--color-border)";
-                          e.currentTarget.style.color = "var(--color-text-muted)";
-                        }}
-                      >
-                        {socialIcons[net]}
-                      </a>
-                    ) : null,
+                <FooterColTitle>Categorías</FooterColTitle>
+                {categories.length > 0 ? (
+                  <ul className="space-y-2.5">
+                    {categories.map((cat) => (
+                      <li key={cat.id}>
+                        <Link
+                          href={`/productos?cat=${encodeURIComponent(cat.name)}`}
+                          className="text-sm transition-colors duration-200"
+                          style={{ color: "var(--color-text-secondary)" }}
+                          onMouseEnter={(e) =>
+                            (e.currentTarget.style.color =
+                              "var(--color-text-primary)")
+                          }
+                          onMouseLeave={(e) =>
+                            (e.currentTarget.style.color =
+                              "var(--color-text-secondary)")
+                          }
+                        >
+                          {cat.name}
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p
+                    className="text-sm"
+                    style={{ color: "var(--color-text-muted)" }}
+                  >
+                    Cargando...
+                  </p>
+                )}
+              </div>
+
+              {/* Contacto + Horarios + Redes */}
+              <div className="space-y-8">
+                <div>
+                  <FooterColTitle>Contacto</FooterColTitle>
+                  <ul className="space-y-3">
+                    {whatsappNumber && (
+                      <li>
+                        <ContactItem
+                          icon={MessageCircle}
+                          href={`https://wa.me/${whatsappNumber}`}
+                        >
+                          WhatsApp
+                        </ContactItem>
+                      </li>
+                    )}
+                    {store?.address && (
+                      <li>
+                        <ContactItem icon={MapPin}>{store.address}</ContactItem>
+                      </li>
+                    )}
+                    {store?.email && (
+                      <li>
+                        <ContactItem icon={Mail} href={`mailto:${store.email}`}>
+                          {store.email}
+                        </ContactItem>
+                      </li>
+                    )}
+                  </ul>
+                  {hasSocials && (
+                    <div className="flex gap-2 flex-wrap mt-4">
+                      {["instagram", "facebook", "tiktok", "youtube"].map(
+                        (net) =>
+                          store?.[net] ? (
+                            <a
+                              key={net}
+                              href={store[net]}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              aria-label={net}
+                              className="w-9 h-9 rounded-xl flex items-center justify-center transition-all duration-200 hover:-translate-y-0.5"
+                              style={{
+                                backgroundColor: "var(--color-border)",
+                                color: "var(--color-text-muted)",
+                              }}
+                              onMouseEnter={(e) => {
+                                e.currentTarget.style.backgroundColor =
+                                  "var(--color-primary)";
+                                e.currentTarget.style.color = "#ffffff";
+                              }}
+                              onMouseLeave={(e) => {
+                                e.currentTarget.style.backgroundColor =
+                                  "var(--color-border)";
+                                e.currentTarget.style.color =
+                                  "var(--color-text-muted)";
+                              }}
+                            >
+                              {socialIcons[net]}
+                            </a>
+                          ) : null,
+                      )}
+                    </div>
                   )}
                 </div>
+
+                {formattedSchedules.length > 0 && (
+                  <div>
+                    <FooterColTitle>Horarios</FooterColTitle>
+                    <ul className="space-y-2">
+                      {formattedSchedules.map((s, i) => (
+                        <li key={i}>
+                          <span
+                            className="text-xs font-medium block"
+                            style={{ color: "var(--color-text-secondary)" }}
+                          >
+                            {s.days}
+                          </span>
+                          <span
+                            className="text-xs"
+                            style={{
+                              color: "var(--color-primary)",
+                              opacity: 0.8,
+                            }}
+                          >
+                            {s.times}
+                          </span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
               </div>
-            )}
+            </div>
           </div>
         </div>
 
@@ -387,9 +396,26 @@ export function Footer({ waveFromColor }) {
           className="text-xs text-center"
           style={{ color: "var(--color-text-muted)" }}
         >
-          © {currentYear} {store?.business_name || "Feria Descartable"}. Todos los
-          derechos reservados.
+          © {currentYear} {store?.business_name || "Feria Descartable"}. Todos
+          los derechos reservados.
         </p>
+      </div>
+
+      {/* ── Logo decorativo al fondo ── */}
+      <div className="absolute bottom-0 left-1/2 -translate-x-1/2 pointer-events-none opacity-30">
+        {store?.logo_url ? (
+          <img
+            src={store.logo_url}
+            alt=""
+            className="h-[100px] w-auto object-contain"
+          />
+        ) : (
+          <img
+            src="/logotipo.png"
+            alt=""
+            className="h-[300px] w-auto object-contain"
+          />
+        )}
       </div>
     </footer>
   );

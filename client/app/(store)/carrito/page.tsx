@@ -2,6 +2,7 @@
 'use client'
 // @ts-nocheck
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { ShoppingCart, ArrowLeft } from "lucide-react";
 import { content } from "@/data/siteData";
@@ -21,7 +22,7 @@ function ThinLine({ className = "", style = {} }) {
 }
 
 /* ── Estado vacío ─────────────────────────────────────────────────────── */
-function CartEmpty({ emptyTitle, emptyMessage, browseProducts }) {
+function CartEmpty({ emptyTitle, emptyMessage, browseProducts, onBack }) {
   return (
     <>
       <section
@@ -33,15 +34,15 @@ function CartEmpty({ emptyTitle, emptyMessage, browseProducts }) {
       >
         <div className="absolute inset-0 pointer-events-none bg-trama" />
         <div className="relative max-w-7xl mx-auto">
-          <Link
-            href="/productos"
+          <button
+            onClick={onBack}
             className="inline-flex items-center gap-1.5 text-xs font-semibold
               text-[var(--color-text-muted)] hover:text-[var(--color-primary)]
               transition-colors mb-5 group"
           >
             <ArrowLeft className="w-3.5 h-3.5 group-hover:-translate-x-0.5 transition-transform" />
-            {content.productDetail.backTo}
-          </Link>
+            Volver
+          </button>
           <div>
             <span className="inline-block text-xs font-bold tracking-widest uppercase text-[var(--color-primary)] mb-3">
               Carrito
@@ -92,6 +93,7 @@ function CartEmpty({ emptyTitle, emptyMessage, browseProducts }) {
    CART PAGE
 ══════════════════════════════════════════════════════════════════════ */
 export default function Cart() {
+  const router = useRouter();
   const { items, totalItems, totalPrice } = useCart();
   const {
     title,
@@ -126,6 +128,7 @@ export default function Cart() {
         emptyTitle={emptyTitle}
         emptyMessage={emptyMessage}
         browseProducts={browseProducts}
+        onBack={() => router.back()}
       />
     );
 
@@ -175,15 +178,17 @@ export default function Cart() {
         <div className="absolute inset-0 pointer-events-none bg-trama" />
 
         <div className="relative max-w-6xl mx-auto z-10">
-          <Link
-            href="/productos"
+          <button
+            onClick={() => router.back()}
             className="inline-flex items-center gap-1.5 text-xs font-semibold
               text-[var(--color-text-muted)] hover:text-[var(--color-primary)]
               transition-colors mb-5 group"
           >
             <ArrowLeft className="w-3.5 h-3.5 group-hover:-translate-x-0.5 transition-transform" />
-            {content.productDetail.backTo}
-          </Link>
+            Volver
+          </button>
+
+          <div className="md:hidden border-t border-[var(--color-border)] mb-4" />
 
           <div className="flex items-end justify-between gap-4">
             <div>
@@ -220,20 +225,8 @@ export default function Cart() {
           <div className="grid lg:grid-cols-3 gap-10">
             {/* ── Items ── */}
             <div className="lg:col-span-2 space-y-6">
-              {productItems.length > 0 && (
-                <>
-                  <h3 className="text-xs font-bold tracking-widest uppercase" style={{ color: "var(--color-text-muted)" }}>Productos</h3>
-                  <div className="border-t border-[var(--color-border)]" />
-                  {productItems.map((item) => <CartItem key={item.id} item={item} />)}
-                </>
-              )}
-              {serviceItems.length > 0 && (
-                <>
-                  <h3 className="text-xs font-bold tracking-widest uppercase mt-2" style={{ color: "var(--color-text-muted)" }}>Servicios</h3>
-                  <div className="border-t border-[var(--color-border)]" />
-                  {serviceItems.map((item) => <CartItem key={item.id} item={item} />)}
-                </>
-              )}
+              {productItems.length > 0 && productItems.map((item) => <CartItem key={item.id} item={item} />)}
+              {serviceItems.length > 0 && serviceItems.map((item) => <CartItem key={item.id} item={item} />)}
               <Link
                 href="/productos"
                 className="inline-flex items-center gap-1.5 text-sm font-medium text-[var(--color-text-muted)] hover:text-[var(--color-primary)] transition-colors group mt-2"

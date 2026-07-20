@@ -4,7 +4,6 @@ export const siteData = {
     items: [
       { label: 'Inicio', href: '/' },
       { label: 'Productos', href: '/productos' },
-      { label: 'Servicios', href: '/servicios' },
       { label: 'Carrito', href: '/carrito', showCartCount: true },
       { label: 'Contacto', href: '/contacto' },
     ],
@@ -18,7 +17,6 @@ export const siteData = {
         links: [
           { label: 'Inicio', href: '/' },
           { label: 'Productos', href: '/productos' },
-          { label: 'Servicios', href: '/servicios' },
           { label: 'Carrito', href: '/carrito' },
           { label: 'Contacto', href: '/contacto' },
         ],
@@ -72,6 +70,7 @@ export const content = {
     tagsLabel: 'Etiquetas',
     addToCart: 'Agregar al carrito',
     addedToCart: '¡Agregado!',
+    viewCart: 'Ver carrito',
     relatedTitle: 'También te puede interesar',
   },
 

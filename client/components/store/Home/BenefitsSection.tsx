@@ -1,13 +1,13 @@
 "use client";
-import { DollarSign, Truck, MessageCircle } from "lucide-react";
+import { Percent, Truck, MessageCircle } from "lucide-react";
 import { Container } from "./Container";
 
 const benefits = [
   {
-    icon: DollarSign,
-    title: "Precios mayoristas",
+    icon: Percent,
+    title: "Descuentos por compra grande",
     description:
-      "Trabajamos para que tu negocio tenga el mejor margen. Calidad sin pagar de más.",
+      "Si tu pedido es grande, nos sentamos a charlar. Buscamos la forma de que obtengas el mejor precio posible.",
   },
   {
     icon: Truck,

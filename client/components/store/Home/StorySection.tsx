@@ -53,22 +53,24 @@ export function StorySection() {
                   textShadow: "0 2px 12px rgba(0,0,0,0.6)",
                 }}
               >
-                Desde 2006 acompañando a emprendedores.
+                Más de 15 años acompañando a emprendedores.
               </h2>
               <div className="space-y-4 font-medium  text-white leading-relaxed">
                 <p>
                   <TextHighlight>
                     Feria Descartable nació con una misión clara: ser el aliado
-                    de quienes empiezan y de quienes ya crecieron. Más de 15
-                    años acercando los mejores insumos a microemprendedores,
-                    comercios y familias.
+                    de quienes empiezan, de quienes ya hicieron crecer su negocio
+                    y de quienes buscan que cada evento sea inolvidable. Hace más
+                    de 15 años acercamos insumos de calidad a microemprendedores,
+                    comercios, familias y organizadores de festejos.
                   </TextHighlight>
                 </p>
                 <p>
                   <TextHighlight>
                     Cada producto que ofrecemos fue elegido pensando en la
-                    calidad, el precio y la confianza. Porque cuando tu negocio
-                    crece, nosotros también.
+                    calidad, el precio y la confianza. Porque ya sea para impulsar
+                    un emprendimiento, equipar un comercio o celebrar un momento
+                    especial, queremos acompañarte en cada paso.
                   </TextHighlight>
                 </p>
               </div>
