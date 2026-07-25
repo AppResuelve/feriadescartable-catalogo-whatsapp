@@ -1,16 +1,8 @@
 "use client";
 import Link from "next/link";
 import { Container } from "./Container";
-import { ImageIcon } from "lucide-react";
 
 const categories = [
-  {
-    name: "Gastronomía",
-    href: "/productos?categoria=gastronomia",
-    image: "/home/descartables.png",
-    description:
-      "Vasos, platos, cubiertos y todo lo descartable para tu evento.",
-  },
   {
     name: "Vidrio",
     href: "/productos?categoria=vidrio",
@@ -24,12 +16,6 @@ const categories = [
     description: "Artículos de cotillón para fiestas y celebraciones.",
   },
   {
-    name: "Repostería",
-    href: "/productos?categoria=reposteria",
-    image: "/home/reposteria.jpeg",
-    description: "Herramientas y insumos para repostería profesional.",
-  },
-  {
     name: "Velas",
     href: "/productos?categoria=velas",
     image: "/home/velas.jpeg",
@@ -40,12 +26,6 @@ const categories = [
     href: "/productos?categoria=cajas",
     image: "/home/cajas.jpg",
     description: "Cajas, bolsas y envoltorios para presentar tu producto.",
-  },
-  {
-    name: "Bolsas",
-    href: "/productos?categoria=bolsas",
-    image: null,
-    description: "Bolsas para packaging y presentación de productos.",
   },
 ];
 
@@ -62,18 +42,11 @@ export function CategoryShowcase() {
                 background: "linear-gradient(to top, white, transparent)",
               }}
             >
-              {cat.image ? (
-                <img
-                  src={cat.image}
-                  alt={cat.name}
-                  className="w-full h-[280px] md:h-[400px] object-cover rounded-lg"
-                />
-              ) : (
-                <div className="w-full h-[280px] md:h-[400px] rounded-lg bg-[var(--color-surface)] flex flex-col items-center justify-center gap-3">
-                  <ImageIcon className="w-12 h-12 text-[var(--color-text-muted)]" />
-                  <span className="text-sm text-[var(--color-text-muted)]">Próximamente</span>
-                </div>
-              )}
+              <img
+                src={cat.image}
+                alt={cat.name}
+                className="w-full h-[280px] md:h-[400px] object-cover rounded-lg"
+              />
               <h3
                 className="text-2xl md:text-3xl font-light text-[var(--color-text-primary)] mt-4 mb-3"
                 style={{ fontFamily: "var(--font-heading)" }}

@@ -14,26 +14,7 @@ export default function HomeClient() {
     <main>
       <Hero />
 
-      <section
-        className="relative py-12 md:py-20"
-        style={{ boxShadow: "0 8px 10px 0px rgba(0,0,0,0.26)" }}
-      >
-        <div
-          className="absolute inset-0 pointer-events-none bg-trama-full"
-          style={{
-            boxShadow:
-              "inset 0 12px 0 var(--color-brown-dark), inset 0 -12px 0 var(--color-brown-dark)",
-          }}
-        />
-        <div
-          className="absolute inset-0 pointer-events-none"
-          style={{
-            background:
-              "linear-gradient(to bottom, rgba(255,180,80,0.75) 0%, rgba(255,140,40,0.40) 10%, transparent 40%)",
-          }}
-        />
-        <BannerSection />
-      </section>
+      <BannerSection />
 
       <Container>
         <SectionTitle
