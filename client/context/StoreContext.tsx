@@ -46,8 +46,10 @@ export function StoreProvider({ children }) {
     load()
   }, [])
 
+  const specialCategory = categories.find((c) => c.isSpecial) || null
+
   return (
-    <StoreContext.Provider value={{ store, categories, productsMap, loading }}>
+    <StoreContext.Provider value={{ store, categories, productsMap, loading, specialCategory }}>
       {children}
     </StoreContext.Provider>
   )

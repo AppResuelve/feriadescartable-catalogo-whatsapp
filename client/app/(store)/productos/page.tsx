@@ -417,19 +417,38 @@ export default function Products() {
                     </button>
                     {openCategories && (
                       <div className="space-y-2">
-                        {categoryLabels.map((category) => (
-                          <button
-                            key={category}
-                            onClick={() => handleCategoryChange(category)}
-                            className={`w-full text-left px-4 py-3 rounded-lg text-sm font-medium transition-colors ${
-                              (selectedCategory === "Todos" ? "Todos" : categories.find((c) => String(c.id) === selectedCategory)?.name || "Todos") === category
-                                ? 'bg-[var(--color-primary)]/10 text-[var(--color-primary)] border border-[var(--color-primary)]/20'
-                                : 'text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-secondary)]/10'
-                            }`}
-                          >
-                            {category}
-                          </button>
-                        ))}
+                        {categoryLabels.map((category) => {
+                          const cat = categories.find((c) => c.name === category);
+                          const isSelected = (selectedCategory === "Todos" ? "Todos" : categories.find((c) => String(c.id) === selectedCategory)?.name || "Todos") === category;
+                          const isSpecial = cat?.isSpecial && cat?.specialColor;
+
+                          return (
+                            <button
+                              key={category}
+                              onClick={() => handleCategoryChange(category)}
+                              className="w-full text-left px-4 py-3 rounded-lg text-sm font-medium transition-colors"
+                              style={{
+                                backgroundColor: isSelected
+                                  ? isSpecial
+                                    ? `${cat.specialColor}15`
+                                    : 'var(--color-primary-light)'
+                                  : 'transparent',
+                                color: isSelected
+                                  ? isSpecial
+                                    ? cat.specialColor
+                                    : 'var(--color-primary)'
+                                  : isSpecial
+                                    ? cat.specialColor
+                                    : 'var(--color-text-secondary)',
+                                border: isSelected
+                                  ? `1px solid ${isSpecial ? `${cat.specialColor}30` : 'var(--color-primary)'}20`
+                                  : '1px solid transparent',
+                              }}
+                            >
+                              {category}
+                            </button>
+                          );
+                        })}
                       </div>
                     )}
                   </div>

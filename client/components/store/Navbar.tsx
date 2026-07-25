@@ -4,7 +4,7 @@
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
-import { Menu, X, ShoppingCart, ChevronDown } from "lucide-react";
+import { Menu, X, ShoppingCart, ChevronDown, Sparkles } from "lucide-react";
 import { siteData } from "@/data/siteData";
 import { useCart } from "@/context/CartContext";
 import { useStore } from "@/context/StoreContext";
@@ -23,7 +23,7 @@ export function Navbar({ heroMode = false }) {
   const [isOpen, setIsOpen] = useState(false);
   const location = usePathname();
   const { totalItems } = useCart();
-  const { categories } = useStore();
+  const { categories, specialCategory } = useStore();
   const searchParams = useSearchParams();
   const currentCat = searchParams?.get("cat") || null;
   const [mobileProductsOpen, setMobileProductsOpen] = useState(false);
@@ -64,7 +64,20 @@ export function Navbar({ heroMode = false }) {
     };
   }, [isOpen]);
 
-  const navLinks = siteData.navbar.items.filter((i) => i.href !== "/carrito");
+  const navLinks = (() => {
+    const base = siteData.navbar.items.filter((i) => i.href !== "/carrito");
+    if (specialCategory) {
+      const specialLink = {
+        label: specialCategory.name,
+        href: `/productos?cat=${encodeURIComponent(specialCategory.slug)}`,
+        isSpecial: true,
+        specialColor: specialCategory.specialColor,
+      };
+      const idx = base.findIndex((i) => i.href === "/productos");
+      return [...base.slice(0, idx), specialLink, ...base.slice(idx)];
+    }
+    return base;
+  })();
 
   /* Colores según estado */
   const textColor = isTransparent
@@ -110,7 +123,7 @@ export function Navbar({ heroMode = false }) {
               ) : (
                 <div className="bg-[var(--color-primary)] rounded-full p-1">
                   <img
-                    src="/logotipo.png"
+                    src="/logotipo.webp"
                     alt={siteData.business?.name || "Feria Descartable"}
                     className="h-10 w-auto object-contain"
                   />
@@ -123,6 +136,7 @@ export function Navbar({ heroMode = false }) {
               {navLinks.map((item) => {
                 const isProducts = item.href === "/productos";
                 const hasCategories = isProducts && categories.length > 0;
+                const isSpecialLink = item.isSpecial;
 
                 return (
                   <div
@@ -137,13 +151,16 @@ export function Navbar({ heroMode = false }) {
                   >
                     <Link
                       href={item.href}
-                      className="relative inline-flex items-center gap-1 px-4 py-2 text-sm font-medium transition-all duration-300 group"
+                      className="relative inline-flex items-center gap-1.5 px-4 py-2 text-sm font-medium transition-all duration-300 group"
                       style={{
                         color: isActive(item.href)
                           ? textColorActive
-                          : textColor,
+                          : isSpecialLink && item.specialColor
+                            ? item.specialColor
+                            : textColor,
                       }}
                     >
+                      {isSpecialLink && <Sparkles className="w-3.5 h-3.5" />}
                       {item.label}
                       {hasCategories && (
                         <ChevronDown
@@ -153,8 +170,8 @@ export function Navbar({ heroMode = false }) {
                       <span
                         className="absolute bottom-1 left-1/2 -translate-x-1/2 h-px transition-all duration-300"
                         style={{
-                          backgroundColor: isTransparent
-                            ? "var(--color-primary)"
+                          backgroundColor: isSpecialLink && item.specialColor
+                            ? item.specialColor
                             : "var(--color-primary)",
                           width: isActive(item.href) ? "1.5rem" : "0",
                         }}
@@ -302,6 +319,7 @@ export function Navbar({ heroMode = false }) {
             {navLinks.map((item) => {
               const isProducts = item.href === "/productos";
               const hasSubitems = isProducts && categories.length > 0;
+              const isSpecialLink = item.isSpecial;
 
               return (
                 <li key={item.href}>
@@ -391,7 +409,9 @@ export function Navbar({ heroMode = false }) {
                       style={{
                         color: isActive(item.href)
                           ? "var(--color-primary)"
-                          : "var(--color-text-secondary)",
+                          : isSpecialLink && item.specialColor
+                            ? item.specialColor
+                            : "var(--color-text-secondary)",
                         backgroundColor: isActive(item.href)
                           ? "var(--color-primary-light)"
                           : "transparent",
@@ -402,9 +422,12 @@ export function Navbar({ heroMode = false }) {
                         style={{
                           backgroundColor: isActive(item.href)
                             ? "var(--color-primary)"
-                            : "var(--color-border-hover)",
+                            : isSpecialLink && item.specialColor
+                              ? item.specialColor
+                              : "var(--color-border-hover)",
                         }}
                       />
+                      {isSpecialLink && <Sparkles className="w-4 h-4" />}
                       {item.label}
                     </Link>
                   )}

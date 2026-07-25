@@ -1,10 +1,11 @@
 // @ts-nocheck
 'use client'
 import { useState, useEffect, useRef } from 'react'
-import { Plus, Edit, Trash2, GripVertical } from 'lucide-react'
+import { Plus, Edit, Trash2, GripVertical, Star } from 'lucide-react'
 import { Button, Input } from '@/components/admin/ui/Form'
 import { Modal } from '@/components/admin/ui/Modal'
 import { Spinner } from '@/components/admin/ui/Spinner'
+import ImageUpload from '@/components/admin/ImageUpload'
 import { useCategories } from '@/hooks/admin-useCategories'
 import { useUnsavedChanges } from '@/context/UnsavedChangesContext'
 import api from '@/services/admin-api'
@@ -26,6 +27,9 @@ export default function Categories() {
   const [name, setName] = useState('')
   const [slug, setSlug] = useState('')
   const [slugManual, setSlugManual] = useState(false)
+  const [isSpecial, setIsSpecial] = useState(false)
+  const [specialImage, setSpecialImage] = useState([])
+  const [specialColor, setSpecialColor] = useState('#6366f1')
   const [ordered, setOrdered] = useState([])
   const dragItem = useRef(null)
   const dragOverItem = useRef(null)
@@ -70,6 +74,9 @@ export default function Categories() {
     setName('')
     setSlug('')
     setSlugManual(false)
+    setIsSpecial(false)
+    setSpecialImage([])
+    setSpecialColor('#6366f1')
     setIsDirty(false)
     setModalOpen(true)
   }
@@ -79,6 +86,9 @@ export default function Categories() {
     setName(cat.name)
     setSlug(cat.slug)
     setSlugManual(true)
+    setIsSpecial(cat.isSpecial || false)
+    setSpecialImage(cat.specialImage ? [cat.specialImage] : [])
+    setSpecialColor(cat.specialColor || '#6366f1')
     setIsDirty(false)
     setModalOpen(true)
   }
@@ -113,12 +123,19 @@ export default function Categories() {
     }
 
     const finalSlug = slug.trim() || slugify(name)
+    const payload = {
+      name,
+      slug: finalSlug,
+      isSpecial,
+      specialImage: specialImage[0] || null,
+      specialColor: isSpecial ? specialColor : null,
+    }
 
     try {
       if (editing) {
-        await api.put(`/admin/categories/${editing.id}`, { name, slug: finalSlug })
+        await api.put(`/admin/categories/${editing.id}`, payload)
       } else {
-        await api.post('/admin/categories', { name, slug: finalSlug, order: categories.length })
+        await api.post('/admin/categories', { ...payload, order: categories.length })
       }
       setModalOpen(false)
       setIsDirty(false)
@@ -187,7 +204,15 @@ export default function Categories() {
             >
               <GripVertical className="w-4 h-4 text-zinc-600 cursor-grab" />
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-zinc-200">{cat.name}</p>
+                <div className="flex items-center gap-2">
+                  <p className="text-sm font-medium text-zinc-200">{cat.name}</p>
+                  {cat.isSpecial && (
+                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium bg-yellow-500/10 text-yellow-400 border border-yellow-500/20">
+                      <Star className="w-3 h-3 fill-current" />
+                      Especial
+                    </span>
+                  )}
+                </div>
                 <p className="text-xs text-zinc-500">{cat.slug}</p>
               </div>
               <span className="text-xs text-zinc-600">{cat.products?.length || 0} productos</span>
@@ -207,6 +232,56 @@ export default function Categories() {
         <form onSubmit={handleSave} className="space-y-4">
           <Input label="Nombre" value={name} onChange={(e) => handleNameChange(e.target.value)} required />
           <Input label="Slug" value={slug} onChange={(e) => handleSlugChange(e.target.value)} placeholder="nombre-de-categoria" required />
+
+          <div className="border-t border-zinc-800 pt-4">
+            <label className="flex items-center gap-3 cursor-pointer group">
+              <input
+                type="checkbox"
+                checked={isSpecial}
+                onChange={() => {
+                  setIsSpecial(!isSpecial)
+                  setIsDirty(true)
+                }}
+                className="w-4 h-4 rounded border-zinc-600 bg-zinc-800 text-cyan-500 focus:ring-cyan-500/50"
+              />
+              <div>
+                <span className="text-sm font-medium text-zinc-200">Categoría especial</span>
+                <p className="text-xs text-zinc-500">Se muestra en el navbar y como banner en el home</p>
+              </div>
+            </label>
+          </div>
+
+          {isSpecial && (
+            <div className="space-y-4 border-t border-zinc-800 pt-4">
+              <ImageUpload
+                images={specialImage}
+                onChange={(imgs) => { setSpecialImage(imgs); setIsDirty(true) }}
+                max={1}
+                cols={1}
+                label="Imagen del banner"
+                folder="banners"
+              />
+              <div>
+                <label className="block text-sm font-medium text-zinc-400 mb-1.5">Color de acento</label>
+                <div className="flex items-center gap-3">
+                  <input
+                    type="color"
+                    value={specialColor}
+                    onChange={(e) => { setSpecialColor(e.target.value); setIsDirty(true) }}
+                    className="w-10 h-10 rounded-lg border border-zinc-700 bg-zinc-800 cursor-pointer"
+                  />
+                  <input
+                    type="text"
+                    value={specialColor}
+                    onChange={(e) => { setSpecialColor(e.target.value); setIsDirty(true) }}
+                    className="flex-1 px-3 py-2 bg-zinc-800 border border-zinc-700 rounded-lg text-zinc-200 text-sm font-mono"
+                    placeholder="#6366f1"
+                  />
+                </div>
+              </div>
+            </div>
+          )}
+
           <div className="flex gap-3 pt-2 justify-end">
             <Button type="button" variant="secondary" onClick={closeModal}>Cancelar</Button>
             <Button type="submit">{editing ? 'Guardar cambios' : 'Crear categoría'}</Button>
