@@ -4,7 +4,7 @@ import { Container } from "./Container";
 
 export function Hero() {
   return (
-    <section className="relative min-h-screen flex flex-col">
+    <section className="relative h-[95vh] flex flex-col">
       <div className="absolute inset-0 -z-10">
         <video
           autoPlay
@@ -22,7 +22,7 @@ export function Hero() {
 
       <div className="flex justify-center pt-24 md:pt-28">
         <img
-          src="/logotipo.png"
+          src="/logotipo.webp"
           alt="Feria Descartable"
           className="h-24 md:h-36 w-auto object-contain"
         />

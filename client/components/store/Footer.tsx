@@ -412,7 +412,7 @@ export function Footer({ waveFromColor }) {
           />
         ) : (
           <img
-            src="/logotipo.png"
+            src="/logotipo.webp"
             alt=""
             className="h-[300px] w-auto object-contain"
           />

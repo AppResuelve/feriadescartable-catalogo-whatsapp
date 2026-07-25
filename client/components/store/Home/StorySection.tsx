@@ -78,7 +78,7 @@ export function StorySection() {
           </div>
           <div>
             <img
-              src="/home/taller2.jpg"
+              src="/home/history.jpg"
               alt="Taller de Feria Descartable"
               className="w-full h-[350px] md:h-[500px] rounded-lg object-cover border-4 border-[var(--color-brown-dark)] shadow-lg"
             />
