@@ -527,20 +527,14 @@ export default function ProductForm() {
         <div className="grid grid-cols-3 items-end gap-4">
           <Input label="Precio de venta" type="number" min="0"
             value={form.retailPrice}
-            onChange={(e) => handleChange('retailPrice', e.target.value)}
-            readOnly={skus.length > 0}
-            disabled={skus.length > 0} />
+            onChange={(e) => handleChange('retailPrice', e.target.value)} />
           <Input label="% Descuento" type="number" min="1" max="100"
             value={form.discountPercentage || ''}
             onChange={(e) => handleChange('discountPercentage', e.target.value || null)}
-            placeholder="Ej: 25"
-            readOnly={skus.length > 0}
-            disabled={skus.length > 0} />
+            placeholder="Ej: 25" />
           <Input label="Precio de comparación" type="number" min="0"
             value={form.comparePrice || ''}
-            onChange={(e) => handleChange('comparePrice', e.target.value || null)}
-            readOnly={skus.length > 0}
-            disabled={skus.length > 0} />
+            onChange={(e) => handleChange('comparePrice', e.target.value || null)} />
         </div>
 
         {skus.length === 0 && (
