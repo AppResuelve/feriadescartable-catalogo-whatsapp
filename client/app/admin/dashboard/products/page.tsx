@@ -1,6 +1,6 @@
 // @ts-nocheck
 'use client'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from "next/link"
 import { useRouter, useSearchParams } from "next/navigation"
 import { Plus, Search, Edit, Trash2, FileSpreadsheet, MoreHorizontal } from 'lucide-react'
@@ -165,6 +165,12 @@ export default function Products() {
       },
     },
     { header: 'Precio', accessor: (p) => formatPrice(p.retailPrice) },
+    {
+      header: 'Variantes',
+      accessor: (p) => (
+        <span className="text-sm text-zinc-400">{p.skus?.length ?? 0}</span>
+      ),
+    },
     {
       header: 'Estado',
       accessor: (p) => (
