@@ -263,8 +263,8 @@ const update = async (id, data) => {
         }
         await product.save({ transaction: t })
       }
-    } else {
-      // Producto simple: crear/actualizar SKU base
+    } else if (Array.isArray(skus)) {
+      // Producto simple (skus: [] explícito): crear/actualizar SKU base
       const [baseSku] = await ProductSku.findOrCreate({
         where: { productId: product.id },
         defaults: {
@@ -294,6 +294,13 @@ const update = async (id, data) => {
 const remove = async (id) => {
   const product = await getById(id);
   return product.destroy();
+};
+
+const toggleStatus = async (id, status) => {
+  const product = await Product.findByPk(id);
+  if (!product) throw Object.assign(new Error('Producto no encontrado'), { status: 404 });
+  await product.update({ status });
+  return product;
 };
 
 const CHUNK = 150;
@@ -435,4 +442,4 @@ const bulkCreate = async (products, categoryId) => {
   return { created: createdCount, warnings, createdAttributes }
 };
 
-module.exports = { list, getById, create, update, remove, bulkCreate };
+module.exports = { list, getById, create, update, remove, toggleStatus, bulkCreate };

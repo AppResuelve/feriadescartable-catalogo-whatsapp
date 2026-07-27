@@ -49,7 +49,7 @@ export default function Products() {
     const newStatus = product.status === 'active' ? 'draft' : 'active'
     setToggling(product.id)
     try {
-      await api.put(`/admin/products/${product.id}`, { status: newStatus })
+      await api.patch(`/admin/products/${product.id}/status`, { status: newStatus })
       updateProduct(product.id, { status: newStatus })
     } catch (err) {
       Alert.fire({ message: 'Error al cambiar estado', type: 'error' })
@@ -73,7 +73,7 @@ export default function Products() {
     setBulkProcessing(true)
     try {
       for (const id of selected) {
-        await api.put(`/admin/products/${id}`, { status })
+        await api.patch(`/admin/products/${id}/status`, { status })
         updateProduct(id, { status })
       }
       Alert.fire({ message: `${selected.length} producto(s) ${status === 'active' ? 'activados' : 'pasados a borrador'}`, type: 'success' })
