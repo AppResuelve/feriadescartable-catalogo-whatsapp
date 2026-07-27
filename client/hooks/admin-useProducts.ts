@@ -22,7 +22,7 @@ export function useProducts(params = {}) {
 
   useEffect(() => {
     fetch()
-  }, [fetch])
+  }, [JSON.stringify(params)])
 
   const updateProduct = (id, changes) => {
     setData((prev) => ({
