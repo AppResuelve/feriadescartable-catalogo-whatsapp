@@ -95,7 +95,7 @@ function SkuCard({ sku, index, attributes, onChange, onRemove, onStatusToggle })
   }
 
   return (
-    <div className="rounded-xl border border-zinc-700 bg-zinc-900/50 overflow-hidden">
+    <div className="rounded-xl border border-zinc-700 bg-zinc-900/50">
       <div role="button" tabIndex={0} onClick={() => setExpanded(!expanded)}
         onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setExpanded(!expanded) } }}
         className="w-full flex items-center gap-3 px-4 py-3 hover:bg-zinc-800/30 transition-colors text-left cursor-pointer">
