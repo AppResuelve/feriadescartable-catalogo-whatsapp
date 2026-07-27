@@ -3,7 +3,6 @@
 
 import { useEffect, useState } from "react"
 import { Menu } from "lucide-react"
-import dynamic from "next/dynamic"
 import { DM_Sans } from "next/font/google"
 import { usePathname, useRouter } from "next/navigation"
 import { AuthProvider, useAuth } from "@/components/admin/context/AuthContext"
@@ -13,7 +12,7 @@ import { siteData } from "@/data/siteData"
 import { Spinner } from "@/components/admin/ui/Spinner"
 import { Skeleton } from "@/components/admin/ui/Skeleton"
 
-const Sidebar = dynamic(() => import("@/components/admin/Sidebar"), { ssr: false })
+import Sidebar from "@/components/admin/Sidebar"
 
 const dmSans = DM_Sans({
   subsets: ['latin'],
