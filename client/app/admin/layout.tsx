@@ -25,7 +25,6 @@ const dmSans = DM_Sans({
 const PAGE_TITLES = {
   '/dashboard': 'Dashboard',
   '/dashboard/products': 'Productos',
-  '/dashboard/services': 'Servicios',
   '/dashboard/categories': 'Categorías',
   '/dashboard/tags': 'Etiquetas',
   '/dashboard/discounts': 'Descuentos',
