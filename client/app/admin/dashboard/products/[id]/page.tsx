@@ -559,19 +559,21 @@ export default function ProductForm() {
           </>
         )}
 
-        {skus.length > 0 && (
-          <div className="p-3 rounded-lg flex items-start gap-3"
-            style={{ backgroundColor: 'rgba(234,179,8,0.08)', border: '1px solid rgba(234,179,8,0.25)' }}>
-            <span className="text-sm shrink-0 mt-0.5">⚠️</span>
-            <div>
-              <p className="text-xs font-medium text-amber-400">Precios gestionados por variante</p>
-              <p className="text-xs text-amber-400/60 mt-0.5">
-                El precio de cada combinación se define en su variante.
-                {form.retailPrice > 0 && ` Más bajo actual: $${form.retailPrice}.`}
-              </p>
+        {skus.length > 0 && (() => {
+          const minPrice = Math.min(...skus.map(s => Number(s.retailPrice)).filter(p => p > 0))
+          return (
+            <div className="p-3 rounded-lg flex items-start gap-3"
+              style={{ backgroundColor: 'rgba(234,179,8,0.08)', border: '1px solid rgba(234,179,8,0.25)' }}>
+              <span className="text-sm shrink-0 mt-0.5">⚠️</span>
+              <div>
+                <p className="text-xs font-medium text-amber-400">Precio base sincronizado con variantes</p>
+                <p className="text-xs text-amber-400/60 mt-0.5">
+                  Se muestra como "desde $X" en la tienda, usando la variante más económica. Actual: ${minPrice || 0}
+                </p>
+              </div>
             </div>
-          </div>
-        )}
+          )
+        })()}
 
         <div className="grid grid-cols-2 gap-4">
           <DropdownSelect label="Estado" value={form.status}
