@@ -568,7 +568,7 @@ export default function ProductForm() {
               <div>
                 <p className="text-xs font-medium text-amber-400">Precio base sincronizado con variantes</p>
                 <p className="text-xs text-amber-400/60 mt-0.5">
-                  Se muestra como "desde $X" en la tienda, usando la variante más económica. Actual: ${minPrice || 0}
+                  En el catálogo de productos se muestra el precio de la variante más económica. Actual: ${minPrice || 0}
                 </p>
               </div>
             </div>
