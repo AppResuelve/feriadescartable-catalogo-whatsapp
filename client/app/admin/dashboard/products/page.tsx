@@ -37,6 +37,13 @@ export default function Products() {
   const { categories } = useCategories()
   const { tags } = useTags()
 
+  useEffect(() => {
+    const sp = new URLSearchParams(searchParams?.toString() || '')
+    if (page > 1) sp.set('page', String(page))
+    else sp.delete('page')
+    router.replace(`/dashboard/products?${sp.toString()}`)
+  }, [page])
+
   const handleToggleStatus = async (e, product) => {
     e.stopPropagation()
     const newStatus = product.status === 'active' ? 'draft' : 'active'
@@ -183,7 +190,7 @@ export default function Products() {
       header: 'Acciones',
       accessor: (p) => (
         <div className="flex items-center gap-1">
-          <button onClick={(e) => { e.stopPropagation(); router.push(`/dashboard/products/${p.id}?fromPage=${page}`) }} className="p-1.5 rounded-lg text-zinc-400 hover:text-cyan-400 hover:bg-cyan-500/10 transition-colors">
+          <button onClick={(e) => { e.stopPropagation(); router.push(`/dashboard/products/${p.id}?page=${page}`) }} className="p-1.5 rounded-lg text-zinc-400 hover:text-cyan-400 hover:bg-cyan-500/10 transition-colors">
             <Edit className="w-4 h-4" />
           </button>
           <button onClick={(e) => { e.stopPropagation(); handleDelete(p) }} className="p-1.5 rounded-lg text-zinc-400 hover:text-red-400 hover:bg-red-500/10 transition-colors">
@@ -301,7 +308,7 @@ export default function Products() {
       <Table
         columns={columns}
         data={products}
-        onRowClick={(p) => router.push(`/dashboard/products/${p.id}?fromPage=${page}`)}
+        onRowClick={(p) => router.push(`/dashboard/products/${p.id}?page=${page}`)}
         emptyMessage="No hay productos"
         selectable
         selected={selected}

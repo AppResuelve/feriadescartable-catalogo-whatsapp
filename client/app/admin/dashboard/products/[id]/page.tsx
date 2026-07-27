@@ -149,7 +149,7 @@ function SkuCard({ sku, index, attributes, onChange, onRemove, onStatusToggle })
 export default function ProductForm() {
   const { id } = useParams()
   const searchParams = useSearchParams()
-  const fromPage = searchParams?.get('fromPage')
+  const fromPage = searchParams?.get('page')
   const isEditing = Boolean(id) && id !== "new"
   const backToList = fromPage ? `/dashboard/products?page=${fromPage}` : '/dashboard/products'
   const router = useRouter()
