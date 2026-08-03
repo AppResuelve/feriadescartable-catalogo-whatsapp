@@ -128,7 +128,10 @@ export default function Cart() {
         emptyTitle={emptyTitle}
         emptyMessage={emptyMessage}
         browseProducts={browseProducts}
-        onBack={() => router.back()}
+        onBack={() => {
+          if (window.history.length > 1) router.back()
+          else router.push('/productos')
+        }}
       />
     );
 
@@ -179,7 +182,10 @@ export default function Cart() {
 
         <div className="relative max-w-6xl mx-auto z-10">
           <button
-            onClick={() => router.back()}
+            onClick={() => {
+              if (window.history.length > 1) router.back()
+              else router.push('/productos')
+            }}
             className="inline-flex items-center gap-1.5 text-xs font-semibold
               text-[var(--color-text-muted)] hover:text-[var(--color-primary)]
               transition-colors mb-5 group"
