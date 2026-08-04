@@ -1,39 +1,29 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useMemo } from "react";
 import { Container } from "./Container";
 import { ProductCard } from "@/components/store/ProductCard";
-import { productsService } from "@/services/storeService";
+import { useStore } from "@/context/StoreContext";
 
 export function FeaturedProducts() {
-  const [products, setProducts] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { productsMap } = useStore();
 
-  useEffect(() => {
-    productsService
-      .list({ limit: 6 })
-      .then(({ products }) => {
-        setProducts(products || []);
-      })
-      .catch(() => {})
-      .finally(() => setLoading(false));
-  }, []);
+  const products = useMemo(() => {
+    const tagged = Object.values(productsMap)
+      .filter((p: any) =>
+        p.tagValues?.some(
+          (tv: any) => tv.tag?.name?.toLowerCase() === "destacados"
+        )
+      )
+      .slice(0, 10);
 
-  if (loading) {
-    return (
-      <section className="py-16 md:py-20">
-        <Container>
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-8">
-            {Array.from({ length: 6 }).map((_, i) => (
-              <div
-                key={i}
-                className="aspect-[3/4] bg-[var(--color-border)] animate-pulse"
-              />
-            ))}
-          </div>
-        </Container>
-      </section>
-    );
-  }
+    if (tagged.length > 0) return tagged;
+
+    return Object.values(productsMap)
+      .sort((a: any, b: any) =>
+        new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+      )
+      .slice(0, 6);
+  }, [productsMap]);
 
   if (products.length === 0) return null;
 
