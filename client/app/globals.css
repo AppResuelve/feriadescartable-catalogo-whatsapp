@@ -190,6 +190,8 @@ body:has(.admin-root) ::selection {
 .markdown a:hover {
   color: var(--color-primary-hover);
 }
+
+.bg-trama {
   background-image: url('/trama-de-madera.png');
   background-size: auto;
   background-repeat: repeat-x;
