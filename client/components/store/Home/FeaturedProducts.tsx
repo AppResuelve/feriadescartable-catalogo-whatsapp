@@ -7,7 +7,7 @@ import { useStore } from "@/context/StoreContext";
 export function FeaturedProducts() {
   const { productsMap } = useStore();
 
-  const products = useMemo(() => {
+  const products: any[] = useMemo(() => {
     const tagged = Object.values(productsMap)
       .filter((p: any) =>
         p.tagValues?.some(
