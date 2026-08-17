@@ -83,4 +83,76 @@ function validateBulkProducts(body) {
   return result.data
 }
 
-module.exports = { productSchema, productUpdateSchema, bulkProductSchema, validateProduct, validateProductUpdate, validateBulkProducts }
+const UPDATE_FIELD_ENUM = [
+  'retailPrice', 'wholesalePrice', 'wholesaleMinQty',
+  'discountPercentage', 'comparePrice', 'description',
+  'stock', 'sku', 'images',
+]
+
+const SYSTEM_FIELD_ENUM = [...UPDATE_FIELD_ENUM, 'status', 'categoryId']
+
+const attrValueSchema = z.object({
+  attrName: z.string(),
+  value: z.string(),
+})
+
+const bulkPreviewSchema = z.object({
+  field: z.enum(UPDATE_FIELD_ENUM, 'Campo inválido para actualizar'),
+  products: z.array(z.object({
+    slug: z.string().min(1, 'El slug es obligatorio para identificar el producto'),
+    value: z.any().optional(),
+    skus: z.array(z.object({
+      attrValues: z.array(attrValueSchema).optional(),
+      value: z.any().optional(),
+    })).optional(),
+  })),
+})
+
+const bulkUpdateSchema = z.object({
+  field: z.enum(UPDATE_FIELD_ENUM, 'Campo inválido para actualizar'),
+  products: z.array(z.object({
+    slug: z.string().min(1, 'El slug es obligatorio para identificar el producto'),
+    oldValue: z.any().optional(),
+    newValue: z.any().optional(),
+    skus: z.array(z.object({
+      attrValues: z.array(attrValueSchema).optional(),
+      oldValue: z.any().optional(),
+      newValue: z.any().optional(),
+    })).optional(),
+  })),
+})
+
+const systemUpdateSchema = z.object({
+  field: z.enum(SYSTEM_FIELD_ENUM, 'Campo inválido para actualizar'),
+  value: z.any().optional(),
+  productIds: z.array(z.coerce.number().int()).min(1, 'Debe seleccionar al menos un producto'),
+})
+
+function validateBulkPreview(body) {
+  const result = bulkPreviewSchema.safeParse(body)
+  if (!result.success) {
+    const message = result.error.issues.map(e => e.message).join(', ')
+    throw Object.assign(new Error(message), { status: 400 })
+  }
+  return result.data
+}
+
+function validateBulkUpdate(body) {
+  const result = bulkUpdateSchema.safeParse(body)
+  if (!result.success) {
+    const message = result.error.issues.map(e => e.message).join(', ')
+    throw Object.assign(new Error(message), { status: 400 })
+  }
+  return result.data
+}
+
+function validateSystemUpdate(body) {
+  const result = systemUpdateSchema.safeParse(body)
+  if (!result.success) {
+    const message = result.error.issues.map(e => e.message).join(', ')
+    throw Object.assign(new Error(message), { status: 400 })
+  }
+  return result.data
+}
+
+module.exports = { productSchema, productUpdateSchema, bulkProductSchema, bulkPreviewSchema, bulkUpdateSchema, systemUpdateSchema, validateProduct, validateProductUpdate, validateBulkProducts, validateBulkPreview, validateBulkUpdate, validateSystemUpdate }

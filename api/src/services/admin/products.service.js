@@ -442,4 +442,417 @@ const bulkCreate = async (products, categoryId) => {
   return { created: createdCount, warnings, createdAttributes }
 };
 
-module.exports = { list, getById, create, update, remove, toggleStatus, bulkCreate };
+const applySyncPrices = (product, skus) => {
+  const activeSkus = skus.filter(s => s.status !== 'draft')
+  if (activeSkus.length === 0) return
+  const retailPrices = activeSkus.map(s => Number(s.retailPrice)).filter(p => p > 0)
+  if (retailPrices.length) product.retailPrice = Math.min(...retailPrices)
+  const wholesalePrices = activeSkus.filter(s => Number(s.wholesalePrice) > 0)
+  if (wholesalePrices.length) {
+    product.wholesalePrice = Math.min(...wholesalePrices.map(s => Number(s.wholesalePrice)))
+    product.wholesaleMinQty = Math.max(...wholesalePrices.map(s => Number(s.wholesaleMinQty) || 1))
+  }
+}
+
+const exportToExcel = async () => {
+  const products = await Product.findAll({
+    order: [['name', 'ASC']],
+    include: [
+      skuInclude,
+      { model: Category, as: 'category', attributes: ['name'] },
+    ],
+  })
+
+  let maxAttrs = 0
+  const variantsInfo = []
+
+  for (const p of products) {
+    const skus = p.skus || []
+    const allValues = skus.flatMap(s => s.attributeValues || [])
+    const hasSkus = allValues.length > 0
+
+    if (hasSkus) {
+      const attrNames = [...new Set(allValues.map(av => av.attribute?.name).filter(Boolean))]
+      maxAttrs = Math.max(maxAttrs, attrNames.length)
+      variantsInfo.push({
+        product: p,
+        isVariant: true,
+        skus,
+        attrNames,
+      })
+    } else {
+      variantsInfo.push({
+        product: p,
+        isVariant: false,
+        sku: skus[0] || null,
+      })
+    }
+  }
+
+  const attrHeaders = []
+  for (let i = 1; i <= maxAttrs; i++) {
+    attrHeaders.push(`atributo_${i}`)
+    attrHeaders.push(`valor_${i}`)
+  }
+
+  const headers = [
+    'slug', 'nombre', 'categoria', 'precio', 'precio_mayorista',
+    'cantidad_mayorista', 'descuento', 'precio_comparacion',
+    'descripcion', 'stock', 'sku', 'imagen',
+    ...attrHeaders,
+  ]
+
+  const rows = []
+
+  for (const info of variantsInfo) {
+    const p = info.product
+
+    if (info.isVariant) {
+      for (const s of info.skus) {
+        const avs = s.attributeValues || []
+        const attrMap = {}
+        for (const av of avs) {
+          if (av.attribute?.name) attrMap[av.attribute.name] = av.value
+        }
+
+        const row = [
+          p.slug, p.name, p.category?.name || '',
+          Number(s.retailPrice) || 0, Number(s.wholesalePrice) || '',
+          s.wholesaleMinQty ?? '', p.discountPercentage ?? '',
+          Number(p.comparePrice) || '', p.description || '',
+          s.stock ?? 0, s.sku || '', (s.images?.[0] || ''),
+        ]
+
+        for (const attrName of info.attrNames) {
+          row.push(attrName)
+          row.push(attrMap[attrName] || '')
+        }
+        for (let i = info.attrNames.length; i < maxAttrs; i++) {
+          row.push('', '')
+        }
+
+        rows.push(row)
+      }
+    } else {
+      const sku = info.sku
+      const row = [
+        p.slug, p.name, p.category?.name || '',
+        Number(p.retailPrice) || 0, Number(p.wholesalePrice) || '',
+        p.wholesaleMinQty ?? '', p.discountPercentage ?? '',
+        Number(p.comparePrice) || '', p.description || '',
+        sku?.stock ?? 0, sku?.sku || '', (p.images?.[0] || ''),
+      ]
+      for (let i = 0; i < maxAttrs; i++) {
+        row.push('', '')
+      }
+
+      rows.push(row)
+    }
+  }
+
+  const XLSX = require('xlsx')
+  const ws = XLSX.utils.aoa_to_sheet([headers, ...rows])
+  const wb = XLSX.utils.book_new()
+  XLSX.utils.book_append_sheet(wb, ws, 'Productos')
+  const buffer = XLSX.write(wb, { type: 'buffer', bookType: 'xlsx' })
+  return buffer
+}
+
+const FIELD_TO_PRODUCT_KEY = {
+  retailPrice: 'retailPrice',
+  wholesalePrice: 'wholesalePrice',
+  wholesaleMinQty: 'wholesaleMinQty',
+  discountPercentage: 'discountPercentage',
+  comparePrice: 'comparePrice',
+  description: 'description',
+  images: 'images',
+}
+
+const FIELD_TO_SKU_KEY = {
+  retailPrice: 'retailPrice',
+  wholesalePrice: 'wholesalePrice',
+  wholesaleMinQty: 'wholesaleMinQty',
+  stock: 'stock',
+  sku: 'sku',
+  images: 'images',
+}
+
+const STRING_FIELDS = ['description', 'sku']
+
+const BULK_CHUNK = 1000
+
+function normalizeValue(field, val) {
+  if (val == null || val === '') return null
+  if (STRING_FIELDS.includes(field)) return String(val).trim()
+  if (field === 'images') return Array.isArray(val) ? (val[0] || '') : String(val)
+  return Number(val)
+}
+
+function toDbValue(field, val) {
+  if (val == null) {
+    if (field === 'images') return []
+    if (field === 'sku') return null
+    return null
+  }
+  if (field === 'images') return Array.isArray(val) ? val : [val]
+  if (STRING_FIELDS.includes(field)) return String(val)
+  return Number(val)
+}
+
+function matchSkuByAttrValues(dbSkus, attrValues) {
+  if (!attrValues?.length) return dbSkus?.[0] || null
+  for (const sku of dbSkus || []) {
+    const avs = sku.attributeValues || []
+    const match = attrValues.every(({ attrName, value }) =>
+      avs.some(av =>
+        av.attribute?.name?.toLowerCase() === attrName.toLowerCase() &&
+        av.value?.toString().toLowerCase() === value.toString().toLowerCase()
+      )
+    )
+    if (match) return sku
+  }
+  return null
+}
+
+function buildProductUpdate(field, newValue, product) {
+  if (field === 'discountPercentage') {
+    const pct = Number(newValue)
+    if (!isNaN(pct) && pct > 0) {
+      const { comparePrice, discountPercentage } = resolveDiscountFields(
+        Number(product.retailPrice) || 0,
+        product.comparePrice,
+        pct,
+      )
+      return { discountPercentage, comparePrice }
+    }
+    return { discountPercentage: null }
+  }
+  if (field === 'comparePrice') {
+    const { comparePrice } = resolveDiscountFields(
+      Number(product.retailPrice) || 0,
+      newValue,
+      product.discountPercentage,
+    )
+    return { comparePrice }
+  }
+  return { [field]: toDbValue(field, newValue) }
+}
+
+const previewDiff = async (field, products) => {
+  const productKey = FIELD_TO_PRODUCT_KEY[field]
+  const skuKey = FIELD_TO_SKU_KEY[field]
+
+  const allSlugs = [...new Set(products.map(p => p.slug).filter(Boolean))]
+  const diffs = []
+
+  for (let i = 0; i < allSlugs.length; i += BULK_CHUNK) {
+    const chunkSlugs = allSlugs.slice(i, i + BULK_CHUNK)
+    const existing = await Product.findAll({
+      where: { slug: chunkSlugs },
+      include: [skuInclude],
+    })
+    const productMap = {}
+    for (const p of existing) productMap[p.slug] = p
+
+    const chunkItems = products.filter(p => chunkSlugs.includes(p.slug))
+
+    for (const item of chunkItems) {
+      const product = productMap[item.slug]
+      if (!product) continue
+
+      const hasSkuData = item.skus?.length > 0
+
+      if (hasSkuData) {
+        const skuDiffs = []
+        for (const skuData of item.skus) {
+          const dbSku = matchSkuByAttrValues(product.skus, skuData.attrValues)
+          if (!dbSku) continue
+          if (!skuKey) continue
+          const oldValue = normalizeValue(field, dbSku[skuKey])
+          const newValue = normalizeValue(field, skuData.value)
+          if (JSON.stringify(oldValue) !== JSON.stringify(newValue)) {
+            skuDiffs.push({ attrValues: skuData.attrValues || [], oldValue, newValue })
+          }
+        }
+        if (skuDiffs.length > 0) {
+          diffs.push({ slug: item.slug, name: product.name, skus: skuDiffs })
+        }
+      } else {
+        const oldValue = productKey
+          ? normalizeValue(field, product[productKey])
+          : (skuKey && product.skus?.length ? normalizeValue(field, product.skus[0][skuKey]) : null)
+        const newValue = normalizeValue(field, item.value)
+        if (JSON.stringify(oldValue) !== JSON.stringify(newValue)) {
+          diffs.push({ slug: item.slug, name: product.name, oldValue, newValue })
+        }
+      }
+    }
+  }
+
+  return { field, total: products.length, diffs }
+}
+
+const bulkUpdate = async (field, products) => {
+  const productKey = FIELD_TO_PRODUCT_KEY[field]
+  const skuKey = FIELD_TO_SKU_KEY[field]
+
+  const allSlugs = [...new Set(products.map(p => p.slug).filter(Boolean))]
+  if (allSlugs.length === 0) {
+    throw Object.assign(new Error('No se encontraron slugs válidos en los datos'), { status: 400 })
+  }
+
+  let updated = 0
+  let skipped = 0
+  const warnings = []
+
+  for (let i = 0; i < allSlugs.length; i += BULK_CHUNK) {
+    const chunkSlugs = allSlugs.slice(i, i + BULK_CHUNK)
+    const existing = await Product.findAll({
+      where: { slug: chunkSlugs },
+      include: [skuInclude],
+    })
+    const productMap = {}
+    for (const p of existing) productMap[p.slug] = p
+
+    const chunkItems = products.filter(p => chunkSlugs.includes(p.slug))
+
+    const t = await sequelize.transaction()
+    try {
+      for (const item of chunkItems) {
+        const product = productMap[item.slug]
+        if (!product) {
+          skipped++
+          warnings.push({ slug: item.slug, reason: 'Producto no encontrado' })
+          continue
+        }
+
+        const hasSkuData = item.skus?.length > 0
+
+        if (hasSkuData) {
+          let conflict = false
+          for (const skuData of item.skus) {
+            const dbSku = matchSkuByAttrValues(product.skus, skuData.attrValues)
+            if (!dbSku) {
+              warnings.push({ slug: item.slug, reason: 'SKU no encontrado (atributos no coinciden)' })
+              conflict = true
+              continue
+            }
+            if (!skuKey) continue
+            const current = normalizeValue(field, dbSku[skuKey])
+            const oldVal = normalizeValue(field, skuData.oldValue)
+            if (JSON.stringify(current) !== JSON.stringify(oldVal)) {
+              warnings.push({ slug: item.slug, reason: 'El valor fue modificado por otro usuario' })
+              conflict = true
+              continue
+            }
+            await dbSku.update({ [skuKey]: toDbValue(field, skuData.newValue) }, { transaction: t })
+          }
+
+          if (conflict) {
+            skipped++
+            continue
+          }
+
+          if (productKey && (field === 'retailPrice' || field === 'wholesalePrice' || field === 'wholesaleMinQty')) {
+            applySyncPrices(product, product.skus)
+            await product.save({ transaction: t })
+          }
+          updated++
+        } else {
+          const current = productKey
+            ? normalizeValue(field, product[productKey])
+            : (skuKey && product.skus?.length ? normalizeValue(field, product.skus[0][skuKey]) : null)
+          const oldVal = normalizeValue(field, item.oldValue)
+          if (JSON.stringify(current) !== JSON.stringify(oldVal)) {
+            warnings.push({ slug: item.slug, reason: 'El valor fue modificado por otro usuario' })
+            skipped++
+            continue
+          }
+
+          if (productKey) {
+            const productUpdates = buildProductUpdate(field, item.newValue, product)
+            if (Object.keys(productUpdates).length > 0) {
+              await product.update(productUpdates, { transaction: t })
+            }
+          }
+
+          if (skuKey && product.skus?.length) {
+            await product.skus[0].update({ [skuKey]: toDbValue(field, item.newValue) }, { transaction: t })
+          }
+
+          updated++
+        }
+      }
+      await t.commit()
+    } catch (err) {
+      await t.rollback()
+      throw err
+    }
+  }
+
+  return { updated, skipped, warnings }
+}
+
+const systemUpdate = async (field, value, productIds) => {
+  const productKey = FIELD_TO_PRODUCT_KEY[field]
+  const skuKey = FIELD_TO_SKU_KEY[field]
+
+  let updated = 0
+  let skipped = 0
+  const warnings = []
+
+  for (let i = 0; i < productIds.length; i += BULK_CHUNK) {
+    const chunkIds = productIds.slice(i, i + BULK_CHUNK)
+    const products = await Product.findAll({
+      where: { id: chunkIds },
+      include: [skuInclude],
+    })
+
+    const t = await sequelize.transaction()
+    try {
+      for (const product of products) {
+        if (field === 'status') {
+          await product.update({ status: value }, { transaction: t })
+          updated++
+          continue
+        }
+
+        if (field === 'categoryId') {
+          await product.update({ categoryId: value == null ? null : Number(value) }, { transaction: t })
+          updated++
+          continue
+        }
+
+        const hasRealVariants =
+          (product.skus || []).some(s => (s.attributeValues || []).length > 0)
+
+        if (hasRealVariants) {
+          skipped++
+          warnings.push({ slug: product.slug, reason: 'Producto con variantes, editar individualmente' })
+          continue
+        }
+
+        if (productKey) {
+          const updates = buildProductUpdate(field, value, product)
+          if (Object.keys(updates).length > 0) {
+            await product.update(updates, { transaction: t })
+          }
+        }
+
+        if (skuKey && product.skus?.length) {
+          await product.skus[0].update({ [skuKey]: toDbValue(field, value) }, { transaction: t })
+        }
+
+        updated++
+      }
+      await t.commit()
+    } catch (err) {
+      await t.rollback()
+      throw err
+    }
+  }
+
+  return { updated, skipped, warnings }
+}
+
+module.exports = { list, getById, create, update, remove, toggleStatus, bulkCreate, exportToExcel, previewDiff, bulkUpdate, systemUpdate };
