@@ -9,6 +9,7 @@ import { DropdownSelect } from '@/components/admin/ui/DropdownSelect'
 import { Table } from '@/components/admin/ui/Table'
 import { Modal } from '@/components/admin/ui/Modal'
 import { Spinner } from '@/components/admin/ui/Spinner'
+import { Pagination } from '@/components/admin/ui/Pagination'
 import BulkProductModal from '@/components/admin/BulkProductModal'
 import { useProducts } from '@/hooks/admin-useProducts'
 import { useCategories } from '@/hooks/admin-useCategories'
@@ -22,8 +23,8 @@ export default function Products() {
   const searchParams = useSearchParams()
   const Alert = useAlert()
   const [search, setSearch] = useState('')
-  const [categoryId, setCategoryId] = useState('')
-  const [tagId, setTagId] = useState('')
+  const [categoryId, setCategoryId] = useState(() => searchParams?.get('categoryId') || '')
+  const [tagId, setTagId] = useState(() => searchParams?.get('tagId') || '')
   const [page, setPage] = useState(() => Number(searchParams?.get('page')) || 1)
   const [bulkOpen, setBulkOpen] = useState(false)
   const [toggling, setToggling] = useState(null)
@@ -39,10 +40,13 @@ export default function Products() {
 
   useEffect(() => {
     const sp = new URLSearchParams(searchParams?.toString() || '')
-    if (page > 1) sp.set('page', String(page))
-    else sp.delete('page')
+    sp.set('page', String(page))
+    if (categoryId) sp.set('categoryId', categoryId)
+    else sp.delete('categoryId')
+    if (tagId) sp.set('tagId', tagId)
+    else sp.delete('tagId')
     router.replace(`/dashboard/products?${sp.toString()}`)
-  }, [page])
+  }, [page, categoryId, tagId])
 
   const handleToggleStatus = async (e, product) => {
     e.stopPropagation()
@@ -127,6 +131,14 @@ export default function Products() {
     refetch()
   }
 
+  const buildProductUrl = (productId) => {
+    const params = new URLSearchParams()
+    params.set('page', String(page))
+    if (categoryId) params.set('categoryId', categoryId)
+    if (tagId) params.set('tagId', tagId)
+    return `/dashboard/products/${productId}?${params.toString()}`
+  }
+
   const columns = [
     {
       header: 'Producto',
@@ -196,7 +208,7 @@ export default function Products() {
       header: 'Acciones',
       accessor: (p) => (
         <div className="flex items-center gap-1">
-          <button onClick={(e) => { e.stopPropagation(); router.push(`/dashboard/products/${p.id}?page=${page}`) }} className="p-1.5 rounded-lg text-zinc-400 hover:text-cyan-400 hover:bg-cyan-500/10 transition-colors">
+          <button onClick={(e) => { e.stopPropagation(); router.push(buildProductUrl(p.id)) }} className="p-1.5 rounded-lg text-zinc-400 hover:text-cyan-400 hover:bg-cyan-500/10 transition-colors">
             <Edit className="w-4 h-4" />
           </button>
           <button onClick={(e) => { e.stopPropagation(); handleDelete(p) }} className="p-1.5 rounded-lg text-zinc-400 hover:text-red-400 hover:bg-red-500/10 transition-colors">
@@ -316,7 +328,7 @@ export default function Products() {
       <Table
         columns={columns}
         data={products}
-        onRowClick={(p) => router.push(`/dashboard/products/${p.id}?page=${page}`)}
+        onRowClick={(p) => router.push(buildProductUrl(p.id))}
         emptyMessage="No hay productos"
         selectable
         selected={selected}
@@ -326,17 +338,7 @@ export default function Products() {
       </div>
 
       {/* Pagination */}
-      {totalPages > 1 && (
-        <div className="flex items-center justify-center gap-2 mt-6">
-          <Button variant="secondary" size="sm" disabled={page === 1} onClick={() => setPage(page - 1)}>
-            Anterior
-          </Button>
-          <span className="text-sm text-zinc-400 px-3">Página {page} de {totalPages}</span>
-          <Button variant="secondary" size="sm" disabled={page === totalPages} onClick={() => setPage(page + 1)}>
-            Siguiente
-          </Button>
-        </div>
-      )}
+      <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
 
       <BulkProductModal
         open={bulkOpen}
