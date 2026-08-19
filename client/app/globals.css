@@ -192,16 +192,17 @@ body:has(.admin-root) ::selection {
 }
 
 .bg-trama {
-  background-image: url('/trama-de-madera.png');
-  background-size: auto;
-  background-repeat: repeat-x;
-  opacity: 0.15;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.85), rgba(255,255,255,0.85)),
+    url('/trama-de-madera.png');
+  background-size: 100% 100%, auto;
+  background-repeat: no-repeat, repeat-x;
 }
 
 @media (max-width: 767px) {
   .bg-trama {
-    background-size: 100% auto;
-    background-repeat: repeat-y;
+    background-size: 100% 100%, 100% auto;
+    background-repeat: no-repeat, repeat-y;
   }
 }
 
