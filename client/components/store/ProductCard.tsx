@@ -173,7 +173,7 @@ export function ProductCard({ product }) {
                   ? "var(--color-primary-light)"
                   : "var(--color-primary)",
               color: quantity > 0 ? "var(--color-primary)" : "#ffffff",
-              border: quantity > 0 ? "1px solid var(--color-primary)" : "none",
+              border: quantity > 0 ? "1px solid var(--color-primary)" : "1px solid transparent",
             }}
             onMouseEnter={(e) => {
               if (quantity === 0)

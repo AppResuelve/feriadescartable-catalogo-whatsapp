@@ -101,7 +101,7 @@ export function Navbar({ heroMode = false }) {
           <div className="flex items-center justify-between h-16">
             {/* Logo */}
             <Link href="/" className="flex items-center gap-3 shrink-0">
-              <div className="w-10 h-10 p-[0.2rem] bg-[var(--color-primary)] rounded-full overflow-hidden shrink-0">
+              <div className="w-10 h-10 bg-[var(--color-primary)] rounded-full overflow-hidden shrink-0">
                 <img
                   src={siteData.company?.logo || "/logotipo.webp"}
                   alt={siteData.business?.name || "Feria Descartable"}
