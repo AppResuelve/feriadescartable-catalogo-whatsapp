@@ -188,7 +188,14 @@ export function ProductCard({ product }) {
                   "var(--color-primary-light)";
             }}
           >
-            {quantity > 0 ? `Agregado (${quantity})` : "Agregar al carrito"}
+            {quantity > 0 ? (
+              `Agregado (${quantity})`
+            ) : (
+              <>
+                <span className="md:hidden">Agregar</span>
+                <span className="hidden md:inline">Agregar al carrito</span>
+              </>
+            )}
           </button>
 
           {/* Botón mayorista — outline pill */}
