@@ -2,7 +2,7 @@
 'use client'
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { SlidersHorizontal, MessageCircle, X, ChevronDown } from "lucide-react";
+import { SlidersHorizontal, MessageCircle, X, ChevronDown, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from "lucide-react";
 import { content } from "@/data/siteData";
 import { useStore } from "@/context/StoreContext";
 import { useProducts } from "@/hooks/useProducts";
@@ -131,78 +131,80 @@ function EmptyState({
 /* ── Paginación ── */
 function Pagination({ page, totalPages, onPageChange }) {
   if (totalPages <= 1) return null;
+
+  const showNav = totalPages > 5;
+
+  const getVisiblePages = () => {
+    if (totalPages <= 5) {
+      return Array.from({ length: totalPages }, (_, i) => i + 1);
+    }
+    if (page <= 2) return [1, 2, 3];
+    if (page >= totalPages - 1) return [totalPages - 2, totalPages - 1, totalPages];
+    return [page - 1, page, page + 1];
+  };
+
+  const visiblePages = getVisiblePages();
+
+  const btnBase = "w-9 h-9 flex items-center justify-center rounded-full text-sm font-medium transition-all duration-200 disabled:opacity-30 disabled:cursor-not-allowed";
+  const btnActive = "bg-[var(--color-primary)] text-white shadow-[0_4px_12px_rgba(79,200,28,0.3)]";
+  const btnInactive = "text-[var(--color-text-secondary)] hover:bg-[var(--color-primary-light)]";
+  const iconBtn = "border border-[var(--color-border)] text-[var(--color-text-secondary)] hover:border-[var(--color-primary)] hover:text-[var(--color-primary)]";
+
   return (
-    <div className="flex items-center justify-center gap-2 mt-10">
-      <button
-        onClick={() => onPageChange(Math.max(1, page - 1))}
-        disabled={page === 1}
-        className="px-4 py-2 text-sm font-medium transition-colors disabled:opacity-30"
-        style={{
-          borderRadius: "2rem",
-          border: "1px solid var(--color-border)",
-          color: "var(--color-text-secondary)",
-        }}
-        onMouseEnter={(e) => {
-          e.currentTarget.style.borderColor = "var(--color-primary)";
-          e.currentTarget.style.color = "var(--color-primary)";
-        }}
-        onMouseLeave={(e) => {
-          e.currentTarget.style.borderColor = "var(--color-border)";
-          e.currentTarget.style.color = "var(--color-text-secondary)";
-        }}
-      >
-        Anterior
-      </button>
+    <div className="w-full flex items-center justify-center gap-2 mt-10">
+      {showNav && (
+        <button
+          onClick={() => onPageChange(1)}
+          disabled={page === 1}
+          className={`${btnBase} ${iconBtn}`}
+          aria-label="Primera página"
+        >
+          <ChevronsLeft className="w-4 h-4" />
+        </button>
+      )}
 
-      <div className="flex items-center gap-1">
-        {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
-          <button
-            key={p}
-            onClick={() => onPageChange(p)}
-            className="w-9 h-9 text-sm font-medium transition-all duration-200"
-            style={{
-              borderRadius: "50%",
-              backgroundColor:
-                p === page ? "var(--color-primary)" : "transparent",
-              color: p === page ? "#ffffff" : "var(--color-text-secondary)",
-              boxShadow:
-                p === page ? "0 4px 12px rgba(79,200,28,0.3)" : "none",
-            }}
-            onMouseEnter={(e) => {
-              if (p !== page)
-                e.currentTarget.style.backgroundColor =
-                  "var(--color-primary-light)";
-            }}
-            onMouseLeave={(e) => {
-              if (p !== page)
-                e.currentTarget.style.backgroundColor = "transparent";
-            }}
-          >
-            {p}
-          </button>
-        ))}
-      </div>
+      {showNav && (
+        <button
+          onClick={() => onPageChange(Math.max(1, page - 1))}
+          disabled={page === 1}
+          className={`${btnBase} ${iconBtn}`}
+          aria-label="Página anterior"
+        >
+          <ChevronLeft className="w-4 h-4" />
+        </button>
+      )}
 
-      <button
-        onClick={() => onPageChange(Math.min(totalPages, page + 1))}
-        disabled={page === totalPages}
-        className="px-4 py-2 text-sm font-medium transition-colors disabled:opacity-30"
-        style={{
-          borderRadius: "2rem",
-          border: "1px solid var(--color-border)",
-          color: "var(--color-text-secondary)",
-        }}
-        onMouseEnter={(e) => {
-          e.currentTarget.style.borderColor = "var(--color-primary)";
-          e.currentTarget.style.color = "var(--color-primary)";
-        }}
-        onMouseLeave={(e) => {
-          e.currentTarget.style.borderColor = "var(--color-border)";
-          e.currentTarget.style.color = "var(--color-text-secondary)";
-        }}
-      >
-        Siguiente
-      </button>
+      {visiblePages.map((p) => (
+        <button
+          key={p}
+          onClick={() => onPageChange(p)}
+          className={`${btnBase} ${p === page ? btnActive : btnInactive}`}
+        >
+          {p}
+        </button>
+      ))}
+
+      {showNav && (
+        <button
+          onClick={() => onPageChange(Math.min(totalPages, page + 1))}
+          disabled={page === totalPages}
+          className={`${btnBase} ${iconBtn}`}
+          aria-label="Página siguiente"
+        >
+          <ChevronRight className="w-4 h-4" />
+        </button>
+      )}
+
+      {showNav && (
+        <button
+          onClick={() => onPageChange(totalPages)}
+          disabled={page === totalPages}
+          className={`${btnBase} ${iconBtn}`}
+          aria-label="Última página"
+        >
+          <ChevronsRight className="w-4 h-4" />
+        </button>
+      )}
     </div>
   );
 }
@@ -265,6 +267,10 @@ export default function ProductsClient({
     if (selectedTagIds.length > 0) params.tagIds = selectedTagIds.join(",");
     tagsService.list(params).then(setTags).catch(() => setTags([]));
   }, [categoryId, selectedTagIds]);
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'instant' })
+  }, [page])
 
   useEffect(() => {
     const sp = new URLSearchParams();
@@ -371,8 +377,6 @@ export default function ProductsClient({
               {subtitle}
             </p>
           )}
-
-          <img src="/guarda-hojas.png" alt="" className="w-48" />
         </div>
       </section>
 
@@ -462,7 +466,7 @@ export default function ProductsClient({
                         className="flex items-center justify-between w-full text-left mb-3"
                       >
                         <h3 className="text-sm font-semibold text-[var(--color-text-primary)]" style={{ fontFamily: 'var(--font-body)' }}>
-                          Filtrar por
+                          Etiquetas
                         </h3>
                         <ChevronDown className={`w-4 h-4 text-[var(--color-text-secondary)] transition-transform ${openTags ? 'rotate-180' : ''}`} />
                       </button>
@@ -470,7 +474,6 @@ export default function ProductsClient({
                         <TagFilter
                           tags={tags}
                           selectedTagIds={selectedTagIds}
-                          selectionMode="single"
                           onToggleTag={handleToggleTag}
                         />
                       )}

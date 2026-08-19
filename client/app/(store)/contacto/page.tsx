@@ -128,8 +128,6 @@ export default function Contact() {
           >
             {subtitle}
           </p>
-
-          <img src="/guarda-hojas.png" alt="" className="w-48" />
         </div>
       </section>
 

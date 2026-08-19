@@ -27,17 +27,6 @@ export default function HomeClient() {
 
       <StorySection />
 
-      <div
-        className="relative w-full h-[100px] -mt-[50px] -mb-[50px] z-10"
-        style={{
-          backgroundImage: 'url("/cinta-bordada.png")',
-          backgroundRepeat: "repeat-x",
-          backgroundPosition: "center",
-          backgroundSize: "auto 100px",
-          filter: "drop-shadow(0 10px 6px rgba(0,0,0,0.20))",
-        }}
-      />
-
       <Container>
         <SectionTitle
           title="Productos destacados"

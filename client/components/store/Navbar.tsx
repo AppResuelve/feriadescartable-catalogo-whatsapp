@@ -101,34 +101,23 @@ export function Navbar({ heroMode = false }) {
           <div className="flex items-center justify-between h-16">
             {/* Logo */}
             <Link href="/" className="flex items-center gap-3 shrink-0">
-              {isTransparent ? (
-                <span
-                  style={{
-                    fontFamily: "var(--font-heading)",
-                    fontSize: "1.3rem",
-                    fontWeight: 600,
-                    color: "var(--color-primary)",
-                  }}
-                >
-                  {siteData.business?.name || "Feria Descartable"}
-                </span>
-              ) : siteData.company?.logo ? (
-                <div className="bg-[var(--color-primary)] rounded-full p-1">
-                  <img
-                    src={siteData.company.logo}
-                    alt={siteData.business?.name || ""}
-                    className="h-10 w-auto object-contain"
-                  />
-                </div>
-              ) : (
-                <div className="bg-[var(--color-primary)] rounded-full p-1">
-                  <img
-                    src="/logotipo.webp"
-                    alt={siteData.business?.name || "Feria Descartable"}
-                    className="h-10 w-auto object-contain"
-                  />
-                </div>
-              )}
+              <div className="bg-[var(--color-primary)] rounded-full p-1 shrink-0">
+                <img
+                  src={siteData.company?.logo || "/logotipo.webp"}
+                  alt={siteData.business?.name || "Feria Descartable"}
+                  className="h-10 w-auto object-contain"
+                />
+              </div>
+              <span
+                style={{
+                  fontFamily: "var(--font-heading)",
+                  fontSize: "1.3rem",
+                  fontWeight: 600,
+                  color: textColor,
+                }}
+              >
+                {siteData.business?.name || "Feria Descartable"}
+              </span>
             </Link>
 
             {/* Links desktop */}

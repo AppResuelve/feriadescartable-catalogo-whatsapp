@@ -19,14 +19,6 @@ export function Hero() {
         <div className="absolute inset-0 bg-black/40" />
       </div>
 
-      <div className="flex justify-center pt-24 md:pt-28">
-        <img
-          src="/logotipo.webp"
-          alt="Feria Descartable"
-          className="h-24 md:h-36 w-auto object-contain"
-        />
-      </div>
-
       <div className="flex-1" />
 
       <Container>

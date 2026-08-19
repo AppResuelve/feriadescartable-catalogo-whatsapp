@@ -220,8 +220,6 @@ export default function Cart() {
               {itemCount.replace("{count}", totalItems)}
             </div>
           </div>
-
-          <img src="/guarda-hojas.png" alt="" className="w-48" />
         </div>
       </section>
 
