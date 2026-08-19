@@ -23,7 +23,6 @@ function StoreInner({ children }: { children: React.ReactNode }) {
     <CartProvider>
       <ScrollToTop />
       <div className="min-h-screen flex flex-col">
-        <div className="fixed inset-0 pointer-events-none -z-10 bg-trama" />
         <Suspense fallback={<div className="h-16" />}>
           <Navbar heroMode={isHome} />
         </Suspense>
