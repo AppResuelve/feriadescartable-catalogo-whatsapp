@@ -3,6 +3,7 @@ import Link from "next/link";
 import { Badge } from "@/components/ui/Badge";
 import { useCart } from "@/context/CartContext";
 import { formatPrice } from "@/utils/formatPrice";
+import { optimizeImageUrl } from "@/utils/imageUrl";
 
 export function ProductCard({ product }) {
   const { addItem, getItemQuantity } = useCart();
@@ -47,7 +48,7 @@ export function ProductCard({ product }) {
             style={{ borderRadius: "1rem" }}
           >
             <img
-              src={product.images[0]}
+              src={optimizeImageUrl(product.images[0])}
               alt={product.name}
               className="w-full h-full object-cover transition-transform duration-500 md:group-hover:scale-105"
             />
