@@ -505,14 +505,14 @@ export default function ProductsClient({
                       borderRadius: "2rem",
                       border: "1px solid var(--color-primary)",
                       color: "var(--color-primary)",
-                      backgroundColor: "transparent",
+                      backgroundColor: "var(--color-card)",
                     }}
                     onMouseEnter={(e) =>
                       (e.currentTarget.style.backgroundColor =
                         "var(--color-primary-light)")
                     }
                     onMouseLeave={(e) =>
-                      (e.currentTarget.style.backgroundColor = "transparent")
+                      (e.currentTarget.style.backgroundColor = "var(--color-card)")
                     }
                   >
                     <SlidersHorizontal className="w-4 h-4" />
