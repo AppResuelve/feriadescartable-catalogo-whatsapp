@@ -13,6 +13,7 @@ import { Spinner } from "@/components/admin/ui/Spinner"
 import { Skeleton } from "@/components/admin/ui/Skeleton"
 
 import Sidebar from "@/components/admin/Sidebar"
+import RestoreStorePage from "@/components/admin/RestoreStorePage"
 
 const dmSans = DM_Sans({
   subsets: ['latin'],
@@ -82,6 +83,12 @@ function AdminShell({ children }: { children: React.ReactNode }) {
 
   if (isPublic) return <>{children}</>
 
+  if (user?.role !== 'super_admin' && user?.billing_status === 'suspended') {
+    return <RestoreStorePage businessName={user?.business_name} />
+  }
+
+  const pastDue = user?.role !== 'super_admin' && user?.billing_status === 'past_due'
+
   const pageTitle = PAGE_TITLES[pathname]
     || Object.entries(PAGE_TITLES).find(([key]) => pathname.startsWith(key))?.[1]
     || ''
@@ -118,6 +125,11 @@ function AdminShell({ children }: { children: React.ReactNode }) {
       </button>
 
       <main className="ml-0 lg:ml-64 p-2 pt-16 lg:p-6 lg:pt-6 min-h-screen">
+        {pastDue && (
+          <div className="mb-4 px-4 py-3 rounded-lg bg-amber-500/10 border border-amber-500/30 text-amber-300 text-sm">
+            Tu suscripción está vencida. Regularizá el pago para evitar la suspensión de tu tienda.
+          </div>
+        )}
         {children}
       </main>
     </div>

@@ -1,7 +1,13 @@
 const crypto = require('crypto')
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
-const { User } = require('../models')
+const { User, Setting } = require('../models')
+const { getStatus } = require('./billing.service')
+
+const getBusinessName = async () => {
+  const row = await Setting.findOne({ where: { key: 'business_name' } })
+  return row?.value || ''
+}
 
 const generateToken = (user) => {
   return jwt.sign(
@@ -12,13 +18,16 @@ const generateToken = (user) => {
 }
 
 const login = async (email, password) => {
+  const billingStatus = await getStatus()
+  const businessName = await getBusinessName()
+
   if (process.env.SUPER_ADMIN_EMAIL && process.env.SUPER_ADMIN_PASSWORD &&
       email === process.env.SUPER_ADMIN_EMAIL && password === process.env.SUPER_ADMIN_PASSWORD) {
     const superUser = { id: 0, name: 'Super Admin', email, role: 'super_admin' }
     const token = generateToken(superUser)
     return {
       token,
-      user: { name: superUser.name, email: superUser.email, role: 'super_admin' },
+      user: { name: superUser.name, email: superUser.email, role: 'super_admin', billing_status: billingStatus, business_name: businessName },
     }
   }
 
@@ -35,7 +44,7 @@ const login = async (email, password) => {
   const token = generateToken(user)
   return {
     token,
-    user: { id: user.id, name: user.name, email: user.email, role: user.role },
+    user: { id: user.id, name: user.name, email: user.email, role: user.role, billing_status: billingStatus, business_name: businessName },
   }
 }
 
@@ -137,8 +146,11 @@ const resetPassword = async (token, newPassword) => {
 }
 
 const me = async (userId) => {
+  const billingStatus = await getStatus()
+  const businessName = await getBusinessName()
+
   if (!userId) {
-    return { id: 0, name: 'Super Admin', email: '', role: 'super_admin' }
+    return { id: 0, name: 'Super Admin', email: '', role: 'super_admin', billing_status: billingStatus, business_name: businessName }
   }
 
   const user = await User.findByPk(userId, {
@@ -147,7 +159,14 @@ const me = async (userId) => {
   if (!user) {
     throw Object.assign(new Error('Usuario no encontrado'), { status: 404 })
   }
-  return user
+  return {
+    id: user.id,
+    name: user.name,
+    email: user.email,
+    role: user.role,
+    billing_status: billingStatus,
+    business_name: businessName,
+  }
 }
 
 module.exports = { generateToken, login, validateToken, activate, changePassword, forgotPassword, resetPassword, me }

@@ -14,7 +14,11 @@ function StoreInner({ children }: { children: React.ReactNode }) {
   const { store, loading } = useStore();
   const pathname = usePathname();
   const isHome = pathname === "/";
-  const status = store?.store_status || "active";
+  const billingStatus = store?.billing_status || "active";
+  const status =
+    billingStatus === "suspended"
+      ? "suspended"
+      : store?.store_status || "active";
 
   if (loading) return null;
   if (status !== "active") return <StoreBlocked status={status} />;
