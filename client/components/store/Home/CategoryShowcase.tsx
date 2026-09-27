@@ -1,6 +1,7 @@
 "use client";
 import Link from "next/link";
 import { Container } from "./Container";
+import { OptimizedImage } from "@/components/ui/OptimizedImage";
 
 const categories = [
   {
@@ -42,11 +43,16 @@ export function CategoryShowcase() {
                 background: "linear-gradient(to top, white, transparent)",
               }}
             >
-              <img
-                src={cat.image}
-                alt={cat.name}
-                className="w-full h-[280px] md:h-[400px] object-cover rounded-lg"
-              />
+              <div className="relative w-full h-[280px] md:h-[400px] rounded-lg overflow-hidden">
+                <OptimizedImage
+                  src={cat.image}
+                  alt={cat.name}
+                  isLocal
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 768px) 100vw, 50vw"
+                />
+              </div>
               <h3
                 className="text-2xl md:text-3xl font-light text-[var(--color-text-primary)] mt-4 mb-3"
                 style={{ fontFamily: "var(--font-heading)" }}

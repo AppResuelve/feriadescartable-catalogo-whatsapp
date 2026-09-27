@@ -2,6 +2,7 @@
 import Link from "next/link";
 import { useStore } from "@/context/StoreContext";
 import { Container } from "./Container";
+import { OptimizedImage } from "@/components/ui/OptimizedImage";
 
 export function BannerSection() {
   const { specialCategory } = useStore();
@@ -33,15 +34,17 @@ export function BannerSection() {
           className="block relative overflow-hidden rounded-2xl group"
         >
           <div className="relative h-[250px] md:h-[350px]">
-            <img
+            <OptimizedImage
               src={specialCategory.specialImage}
               alt={specialCategory.name}
-              className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+              fill
+              className="object-cover transition-transform duration-700 group-hover:scale-105"
+              sizes="100vw"
             />
             <div
               className="absolute inset-0"
               style={{
-                background: `linear-gradient(135deg, ${specialCategory.specialColor || 'rgba(0,0,0,0.5)'}cc, transparent)`,
+                background: `linear-gradient(135deg, ${specialCategory.specialColor || "rgba(0,0,0,0.5)"}cc, transparent)`,
               }}
             />
             <div className="absolute inset-0 flex flex-col items-start justify-center p-8 md:p-12">

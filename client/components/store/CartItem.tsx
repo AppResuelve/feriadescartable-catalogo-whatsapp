@@ -1,24 +1,29 @@
-'use client'
-import { X } from 'lucide-react'
-import Link from 'next/link'
-import { QuantitySelector } from './QuantitySelector'
-import { useCart } from '@/context/CartContext'
-import { formatPrice } from '@/utils/formatPrice'
-import { optimizeImageUrl } from '@/utils/imageUrl'
+"use client";
+import { X } from "lucide-react";
+import Link from "next/link";
+import { QuantitySelector } from "./QuantitySelector";
+import { useCart } from "@/context/CartContext";
+import { formatPrice } from "@/utils/formatPrice";
+import { OptimizedImage } from "../ui/OptimizedImage";
 
 export function CartItem({ item }) {
-  const { updateQuantity, removeItem } = useCart()
+  const { updateQuantity, removeItem } = useCart();
 
-  const hasWholesale = item.wholesalePrice && item.wholesaleMinQty
-  const usesWholesale = hasWholesale && item.quantity >= item.wholesaleMinQty
+  const hasWholesale = item.wholesalePrice && item.wholesaleMinQty;
+  const usesWholesale = hasWholesale && item.quantity >= item.wholesaleMinQty;
 
   return (
     <div className="flex gap-4 p-4 rounded-2xl border border-[var(--color-border)] bg-[var(--color-card)]">
-      <Link href={`/productos/${item.slug}`} className="shrink-0">
-        <img
-          src={optimizeImageUrl(item.images[0])}
+      <Link
+        href={`/productos/${item.slug}`}
+        className="relative shrink-0 w-24 h-24 rounded-xl overflow-hidden"
+      >
+        <OptimizedImage
+          src={item.images[0]}
           alt={item.name}
-          className="w-24 h-24 object-cover rounded-xl"
+          fill
+          className="object-cover"
+          sizes="96px"
         />
       </Link>
 
@@ -46,7 +51,9 @@ export function CartItem({ item }) {
         <p className="text-sm text-[var(--color-text-muted)] mt-1">
           {formatPrice(item.unitPrice)} c/u
           {usesWholesale && (
-            <span className="ml-2 text-[var(--color-primary)] font-medium">(mayorista)</span>
+            <span className="ml-2 text-[var(--color-primary)] font-medium">
+              (mayorista)
+            </span>
           )}
         </p>
 
@@ -63,5 +70,5 @@ export function CartItem({ item }) {
         </div>
       </div>
     </div>
-  )
+  );
 }

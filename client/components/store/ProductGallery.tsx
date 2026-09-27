@@ -1,35 +1,38 @@
-'use client'
-import { useState } from 'react'
-import { ChevronLeft, ChevronRight } from 'lucide-react'
+"use client";
+import { useState } from "react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import { OptimizedImage } from "../ui/OptimizedImage";
 
 export function ProductGallery({ images, productName, discountPercentage }) {
-  const [currentIndex, setCurrentIndex] = useState(0)
+  const [currentIndex, setCurrentIndex] = useState(0);
 
   if (!images || images.length === 0) {
     return (
       <div className="aspect-square bg-[var(--color-surface)] rounded-lg flex items-center justify-center">
         <span className="text-[var(--color-text-muted)]">Sin imagen</span>
       </div>
-    )
+    );
   }
 
   const goToPrevious = (e) => {
-    e.preventDefault()
-    setCurrentIndex((prev) => (prev === 0 ? images.length - 1 : prev - 1))
-  }
+    e.preventDefault();
+    setCurrentIndex((prev) => (prev === 0 ? images.length - 1 : prev - 1));
+  };
 
   const goToNext = (e) => {
-    e.preventDefault()
-    setCurrentIndex((prev) => (prev === images.length - 1 ? 0 : prev + 1))
-  }
+    e.preventDefault();
+    setCurrentIndex((prev) => (prev === images.length - 1 ? 0 : prev + 1));
+  };
 
   return (
     <div className="space-y-4">
       <div className="relative aspect-square rounded-lg overflow-hidden bg-[var(--color-surface)]">
-        <img
+        <OptimizedImage
           src={images[currentIndex]}
           alt={`${productName} - Imagen ${currentIndex + 1}`}
-          className="w-full h-full object-cover"
+          fill
+          className="object-cover"
+          sizes="(max-width: 768px) 100vw, 50vw"
         />
 
         {discountPercentage && (
@@ -64,24 +67,26 @@ export function ProductGallery({ images, productName, discountPercentage }) {
             <button
               key={index}
               onClick={(e) => {
-                e.preventDefault()
-                setCurrentIndex(index)
+                e.preventDefault();
+                setCurrentIndex(index);
               }}
-              className={`shrink-0 w-20 h-20 rounded-md overflow-hidden border-2 transition-colors ${
+              className={`relative shrink-0 w-20 h-20 rounded-md overflow-hidden border-2 transition-colors ${
                 index === currentIndex
-                  ? 'border-[var(--color-primary)]'
-                  : 'border-transparent opacity-60 hover:opacity-100'
+                  ? "border-[var(--color-primary)]"
+                  : "border-transparent opacity-60 hover:opacity-100"
               }`}
             >
-              <img
+              <OptimizedImage
                 src={image}
                 alt={`${productName} - Miniatura ${index + 1}`}
-                className="w-full h-full object-cover"
+                fill
+                className="object-cover"
+                sizes="80px"
               />
             </button>
           ))}
         </div>
       )}
     </div>
-  )
+  );
 }
