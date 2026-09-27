@@ -21,9 +21,12 @@ export function OptimizedImage({
 
   return (
     <>
-      {!loaded && (
-        <div className="absolute inset-0 animate-pulse bg-[var(--color-surface)]" />
-      )}
+      <div
+        aria-hidden="true"
+        className={`absolute inset-0 animate-pulse bg-[var(--color-surface)] transition-opacity duration-500 ${
+          loaded ? "opacity-0" : "opacity-100"
+        }`}
+      />
       <Image
         loader={getImageLoader(isLocal)}
         src={src}
