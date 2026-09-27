@@ -23,7 +23,7 @@ export function OptimizedImage({
     <>
       <div
         aria-hidden="true"
-        className={`absolute inset-0 animate-pulse bg-[var(--color-surface)] transition-opacity duration-500 ${
+        className={`absolute inset-0 animate-pulse bg-[var(--color-primary)] transition-opacity duration-500 ${
           loaded ? "opacity-0" : "opacity-100"
         }`}
       />
