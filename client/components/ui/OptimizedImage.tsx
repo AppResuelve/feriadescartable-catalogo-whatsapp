@@ -2,6 +2,7 @@
 "use client";
 import { useState } from "react";
 import Image, { ImageProps } from "next/image";
+import { ImageIcon } from "lucide-react";
 import { getImageLoader } from "@/utils/imageOptimization";
 
 type OptimizedImageProps = Omit<ImageProps, "loader" | "src" | "onLoad"> & {
@@ -23,10 +24,18 @@ export function OptimizedImage({
     <>
       <div
         aria-hidden="true"
-        className={`absolute inset-0 animate-pulse bg-[var(--color-primary)] transition-opacity duration-500 ${
+        className={`absolute inset-0 items-center justify-center animate-pulse bg-[var(--color-skeleton)] transition-opacity duration-500 ${
           loaded ? "opacity-0" : "opacity-100"
         }`}
-      />
+      >
+        <ImageIcon
+          className="text-[var(--color-text-muted)]"
+          style={{
+            width: "clamp(16px, 25%, 48px)",
+            height: "clamp(16px, 25%, 48px)",
+          }}
+        />
+      </div>
       <Image
         loader={getImageLoader(isLocal)}
         src={src}
