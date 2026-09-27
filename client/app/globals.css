@@ -27,7 +27,7 @@
 
   --color-skeleton: color-mix(
     in srgb,
-    var(--color-text-primary) 15%,
+    var(--color-text-primary) 10%,
     var(--color-surface)
   );
 

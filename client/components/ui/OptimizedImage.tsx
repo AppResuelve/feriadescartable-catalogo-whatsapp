@@ -24,7 +24,7 @@ export function OptimizedImage({
     <>
       <div
         aria-hidden="true"
-        className={`absolute inset-0 items-center justify-center animate-pulse bg-[var(--color-skeleton)] transition-opacity duration-500 ${
+        className={`absolute inset-0 flex items-center justify-center animate-pulse bg-[var(--color-skeleton)] transition-opacity duration-500 ${
           loaded ? "opacity-0" : "opacity-100"
         }`}
       >
